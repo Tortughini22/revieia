@@ -1,0 +1,2823 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a0e14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="RéviseIA">
+<title>RéviseIA – IA Entraînable</title>
+<link rel="manifest" href="data:application/json,{%22name%22:%22R%C3%A9viseIA%22,%22short_name%22:%22R%C3%A9viseIA%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22,%22background_color%22:%22%2307090f%22,%22theme_color%22:%22%234a86f0%22,%22icons%22:[{%22src%22:%22https://api.dicebear.com/7.x/shapes/svg?seed=reviseia%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg+xml%22}]}">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07090f;--s1:#0e1219;--s2:#131820;--s3:#181f2b;
+  --bdr:#1c2536;--bdr2:#232f42;
+  --c1:#4a86f0;--c2:#6e52e8;--c3:#00c896;--c4:#e89a1e;--c5:#e84444;
+  --txt:#cdd8f0;--txt2:#6b82a6;--txt3:#2e3f5c;
+  --r:11px;--rL:16px;
+  --fs:14px;
+}
+body.light{
+  --bg:#f4f6fb;--s1:#ffffff;--s2:#eef1f8;--s3:#e4e9f5;
+  --bdr:#d0d8ee;--bdr2:#bcc8e8;
+  --txt:#1a2340;--txt2:#4a5a80;--txt3:#9aaaca;
+}
+
+body.light .nav{background:rgba(244,246,251,.97)}
+body.light .modal{background:var(--s1)}
+body.fs-sm{--fs:12px}body.fs-md{--fs:14px}body.fs-lg{--fs:16px}
+body{font-size:var(--fs)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+body::before{content:'';position:fixed;inset:0;background:
+  radial-gradient(ellipse 80% 60% at 10% 0%,rgba(79,142,247,.08) 0,transparent 55%),
+  radial-gradient(ellipse 60% 50% at 90% 100%,rgba(124,90,245,.07) 0,transparent 55%),
+  radial-gradient(ellipse 40% 30% at 50% 50%,rgba(0,212,160,.03) 0,transparent 60%);
+  pointer-events:none;z-index:0}
+
+#app{position:relative;z-index:1;max-width:840px;margin:0 auto;padding:16px 14px 96px}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;gap:12px;padding:14px 0 24px}
+.logo{width:46px;height:46px;background:linear-gradient(135deg,var(--c1),var(--c2));border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 6px 24px rgba(79,142,247,.35);flex-shrink:0}
+.logo-t h1{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;background:linear-gradient(90deg,var(--c1),var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.logo-t span{font-size:11px;color:var(--txt3);font-weight:400;letter-spacing:.4px}
+.hdr-right{margin-left:auto;display:flex;gap:6px}
+.ic-btn{width:36px;height:36px;border-radius:10px;background:var(--s2);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all .2s}
+.ic-btn:hover{background:var(--s3);border-color:var(--bdr2)}
+
+/* BUTTONS */
+.btn{padding:11px 22px;border:none;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px;letter-spacing:.1px}
+.btn-p{background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;box-shadow:0 4px 20px rgba(79,142,247,.3)}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(79,142,247,.4)}
+.btn-s{background:var(--s3);color:var(--txt);border:1px solid var(--bdr2)}
+.btn-s:hover{background:var(--bdr2)}
+.btn-g{background:rgba(0,212,160,.1);color:var(--c3);border:1px solid rgba(0,212,160,.2)}
+.btn-g:hover{background:rgba(0,212,160,.18)}
+.btn-a{background:rgba(245,166,35,.1);color:var(--c4);border:1px solid rgba(245,166,35,.2)}
+.btn-a:hover{background:rgba(245,166,35,.18)}
+.btn-sm{padding:7px 14px;font-size:12px;border-radius:9px}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none!important}
+.btn-full{width:100%;justify-content:center;padding:16px;font-size:15px}
+
+/* CARDS */
+.card{background:var(--s1);border:1px solid var(--bdr);border-radius:var(--rL);padding:22px;margin-bottom:14px}
+.card-hi{border-color:rgba(79,142,247,.3);background:linear-gradient(135deg,rgba(79,142,247,.06),rgba(124,90,245,.04))}
+
+/* PILLS */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;border:1px solid transparent;font-family:'Inter',sans-serif}
+.pblue{background:rgba(79,142,247,.1);border-color:rgba(79,142,247,.2);color:var(--c1)}.pblue.on{background:var(--c1);color:#fff;border-color:var(--c1)}
+.ppurple{background:rgba(124,90,245,.1);border-color:rgba(124,90,245,.2);color:var(--c2)}.ppurple.on{background:var(--c2);color:#fff}
+.pgreen{background:rgba(0,212,160,.1);border-color:rgba(0,212,160,.2);color:var(--c3)}.pgreen.on{background:var(--c3);color:#060810}
+.pamber{background:rgba(245,166,35,.1);border-color:rgba(245,166,35,.2);color:var(--c4)}.pamber.on{background:var(--c4);color:#060810}
+.pred{background:rgba(240,79,79,.1);border-color:rgba(240,79,79,.2);color:var(--c5)}.pred.on{background:var(--c5);color:#fff}
+.pill-row{display:flex;flex-wrap:wrap;gap:7px}
+
+/* FORMS */
+textarea,input[type=text],select{width:100%;background:var(--s2);border:1.5px solid var(--bdr);border-radius:11px;color:var(--txt);font-family:'Inter',sans-serif;font-size:14px;padding:13px 15px;transition:border-color .2s;outline:none}
+textarea:focus,input:focus,select:focus{border-color:var(--c1)}
+textarea{resize:vertical;line-height:1.65}
+select{appearance:none;cursor:pointer}
+label.lbl{font-size:12px;color:var(--txt2);margin-bottom:7px;font-weight:500;display:block}
+
+/* HOME */
+.hero{text-align:center;padding:8px 0 32px}
+.hero h2{font-family:'Syne',sans-serif;font-size:clamp(24px,5.5vw,38px);font-weight:800;line-height:1.15;margin-bottom:10px}
+.hero h2 em{font-style:normal;background:linear-gradient(90deg,var(--c1),var(--c3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:var(--txt2);font-size:14px;max-width:460px;margin:0 auto 26px;line-height:1.7}
+.act-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:24px}
+.act-card{background:var(--s1);border:1px solid var(--bdr);border-radius:var(--rL);padding:17px;cursor:pointer;transition:all .2s;text-align:left}
+.act-card:hover{border-color:var(--c1);transform:translateY(-2px);box-shadow:0 8px 32px rgba(79,142,247,.12)}
+.act-card .ai{font-size:24px;margin-bottom:9px}
+.act-card h3{font-size:14px;font-weight:600;margin-bottom:3px;font-family:'Syne',sans-serif}
+.act-card p{font-size:12px;color:var(--txt2);line-height:1.45}
+.act-card.new-feat{border-color:rgba(245,166,35,.3);background:linear-gradient(135deg,rgba(245,166,35,.05),transparent)}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:22px}
+.stat{background:var(--s1);border:1px solid var(--bdr);border-radius:14px;padding:13px;text-align:center}
+.stat .n{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;color:var(--c1);line-height:1}
+.stat .l{font-size:10px;color:var(--txt3);margin-top:3px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+
+/* AI LEVEL */
+.ai-level{background:var(--s1);border:1px solid var(--bdr);border-radius:var(--rL);padding:18px;margin-bottom:14px}
+.lvl-bar{height:7px;background:var(--bdr);border-radius:4px;margin:10px 0 6px;overflow:hidden}
+.lvl-fill{height:100%;border-radius:4px;transition:width .6s;background:linear-gradient(90deg,var(--c1),var(--c2))}
+
+/* QUIZ */
+.qprog{height:3px;background:var(--bdr);border-radius:2px;margin-bottom:20px;overflow:hidden}
+.qprog-f{height:100%;background:linear-gradient(90deg,var(--c1),var(--c2));border-radius:2px;transition:width .4s}
+.qnum{font-size:11px;color:var(--txt3);text-transform:uppercase;letter-spacing:1.2px;font-weight:600;margin-bottom:5px}
+.qtxt{font-family:'Syne',sans-serif;font-size:19px;font-weight:600;line-height:1.4;margin-bottom:20px}
+.choices{display:flex;flex-direction:column;gap:8px}
+.ch{display:flex;align-items:flex-start;gap:12px;background:var(--s2);border:1.5px solid var(--bdr);border-radius:12px;padding:14px;cursor:pointer;text-align:left;transition:all .2s;font-family:'Inter',sans-serif;font-size:14px;color:var(--txt);width:100%}
+.ch:hover:not(:disabled){border-color:var(--c1);background:rgba(79,142,247,.06)}
+.ch.sel{border-color:var(--c1);background:rgba(79,142,247,.08)}
+.ch.ok{border-color:var(--c3)!important;background:rgba(0,212,160,.07)!important}
+.ch.ko{border-color:var(--c5)!important;background:rgba(240,79,79,.07)!important}
+.ch:disabled{cursor:default}
+.chl{width:28px;height:28px;border-radius:50%;background:var(--bdr2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;font-family:'Syne',sans-serif}
+.tf-row{display:flex;gap:10px}
+.tfb{flex:1;padding:15px;border-radius:12px;border:1.5px solid var(--bdr);background:var(--s2);color:var(--txt);font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.tfb:hover:not(:disabled){border-color:var(--c1)}
+.tfb.sel{border-color:var(--c1);background:rgba(79,142,247,.08)}
+.tfb.ok{border-color:var(--c3)!important;background:rgba(0,212,160,.07)!important}
+.tfb.ko{border-color:var(--c5)!important;background:rgba(240,79,79,.07)!important}
+.oa{width:100%;min-height:110px;background:var(--s2);border:1.5px solid var(--bdr);border-radius:12px;color:var(--txt);font-family:'Inter',sans-serif;font-size:14px;padding:14px;resize:vertical}
+.oa:focus{outline:none;border-color:var(--c1)}
+.fb{border-radius:0 12px 12px 0;padding:13px 16px;margin-top:13px;font-size:13px;line-height:1.65;animation:fd .3s ease}
+.fb.okf{border-left:3px solid var(--c3);background:rgba(0,212,160,.05)}
+.fb.kof{border-left:3px solid var(--c5);background:rgba(240,79,79,.05)}
+@keyframes fd{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* RESULTS */
+.score-wrap{display:flex;flex-direction:column;align-items:center;padding:20px 0 28px}
+.score-circle{width:130px;height:130px;position:relative;margin-bottom:16px}
+.score-circle svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.score-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-num .sn{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;color:var(--c1)}
+.score-num .sd{font-size:12px;color:var(--txt3)}
+.rev-item{padding:13px 0;border-bottom:1px solid var(--bdr)}
+.rev-item:last-child{border:none}
+.rev-q{font-size:13px;font-weight:600;margin-bottom:5px}
+.rev-st{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px;margin-bottom:7px}
+.rev-st.ok{background:rgba(0,212,160,.1);color:var(--c3)}
+.rev-st.ko{background:rgba(240,79,79,.1);color:var(--c5)}
+.rev-e{font-size:12px;color:var(--txt2);line-height:1.6}
+.advice-box{background:linear-gradient(135deg,rgba(79,142,247,.07),rgba(124,90,245,.05));border:1px solid rgba(79,142,247,.2);border-radius:var(--rL);padding:18px;margin-bottom:14px}
+.advice-box h4{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:10px;color:var(--c1)}
+.advice-box p{font-size:13px;line-height:1.75;color:var(--txt2);white-space:pre-wrap}
+
+/* EXERCISE MODE */
+.step-list{display:flex;flex-direction:column;gap:0}
+.step{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--bdr)}
+.step:last-child{border:none}
+.step-num{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--c1),var(--c2));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:'Syne',sans-serif;flex-shrink:0;margin-top:2px}
+.step-
+.step-title{font-size:14px;font-weight:600;margin-bottom:5px;font-family:'Syne',sans-serif}
+.step-content{font-size:13px;color:var(--txt2);line-height:1.7}
+.formula-box{background:var(--s2);border:1px solid var(--bdr);border-radius:10px;padding:12px 16px;margin:8px 0;font-family:monospace;font-size:14px;color:var(--c3)}
+.result-box{background:linear-gradient(135deg,rgba(0,212,160,.08),rgba(0,212,160,.04));border:1px solid rgba(0,212,160,.25);border-radius:12px;padding:16px;margin-top:14px;text-align:center}
+.result-box .res-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--c3)}
+.result-box .res-lbl{font-size:12px;color:var(--txt2);margin-top:4px}
+.subj-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;margin-bottom:14px}
+.exo-card{background:var(--s2);border:1px solid var(--bdr);border-radius:12px;padding:16px;margin-bottom:12px;font-size:14px;line-height:1.7;color:var(--txt2);position:relative}
+.exo-card::before{content:'📋';position:absolute;top:14px;right:14px;font-size:18px}
+
+/* TRAINING */
+.tr-item{display:flex;gap:12px;padding:13px;background:var(--s2);border:1px solid var(--bdr);border-radius:11px;margin-bottom:8px;position:relative}
+.tr-item .tiq{font-size:13px;font-weight:600;margin-bottom:3px}
+.tr-item .tia{font-size:12px;color:var(--txt2)}
+.tr-t{font-size:10px;padding:2px 9px;border-radius:10px;font-weight:700;margin-top:5px;display:inline-block}
+.tqcm{background:rgba(79,142,247,.12);color:var(--c1)}
+.touv{background:rgba(124,90,245,.12);color:var(--c2)}
+.tvtf{background:rgba(0,212,160,.12);color:var(--c3)}
+.tdel{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--txt3);cursor:pointer;font-size:15px;padding:2px 5px;transition:color .2s}
+.tdel:hover{color:var(--c5)}
+
+/* HISTORY */
+.hi-item{display:flex;align-items:center;gap:12px;padding:13px;background:var(--s1);border:1px solid var(--bdr);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:all .2s}
+.hi-item:hover{border-color:var(--bdr2)}
+.hibadge{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.hiinfo{flex:1;min-width:0}
+.hit{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.him{font-size:11px;color:var(--txt3);margin-top:2px}
+.hiscore{font-family:'Syne',sans-serif;font-size:19px;font-weight:700}
+
+/* INSTALL MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:flex;align-items:flex-end;justify-content:center;animation:fo .2s ease}
+@keyframes fo{from{opacity:0}to{opacity:1}}
+.modal{background:var(--s1);border:1px solid var(--bdr);border-radius:22px 22px 0 0;padding:24px;max-width:840px;width:100%;max-height:85vh;overflow-y:auto;animation:su2 .3s ease}
+@keyframes su2{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.modal h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin-bottom:6px}
+.modal-close{position:absolute;top:20px;right:20px;background:var(--s2);border:1px solid var(--bdr);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px}
+.inst-step{display:flex;gap:13px;padding:14px;background:var(--s2);border:1px solid var(--bdr);border-radius:12px;margin-bottom:10px}
+.inst-num{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--c1),var(--c2));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;font-family:'Syne',sans-serif}
+.inst-
+.inst-
+.inst-
+.tab-switch{display:flex;background:var(--s2);border:1px solid var(--bdr);border-radius:12px;padding:4px;margin-bottom:16px;gap:4px}
+.ts-btn{flex:1;padding:8px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:all .2s;color:var(--txt2);background:transparent}
+.ts-btn.on{background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff}
+.qr-box{background:var(--s2);border:1px solid var(--bdr);border-radius:12px;padding:20px;text-align:center;margin-bottom:14px}
+.qr-box canvas{border-radius:8px}
+
+/* TOAST */
+.toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:var(--s1);border:1px solid var(--bdr2);border-radius:12px;padding:11px 20px;font-size:13px;font-weight:500;box-shadow:0 8px 32px rgba(0,0,0,.6);z-index:999;white-space:nowrap;animation:ts .3s ease}
+@keyframes ts{from{opacity:0;transform:translate(-50%,14px)}to{opacity:1;transform:translate(-50%,0)}}
+
+/* NAV */
+.nav{position:fixed;bottom:0;left:0;right:0;background:rgba(6,8,16,.97);backdrop-filter:blur(20px);border-top:1px solid var(--bdr);display:flex;justify-content:space-around;padding:7px 0 env(safe-area-inset-bottom,7px);z-index:200}
+.nv{display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 14px;cursor:pointer;opacity:.35;transition:all .2s;background:none;border:none;color:var(--txt);font-family:'Inter',sans-serif;font-size:9px;font-weight:600;letter-spacing:.4px;text-transform:uppercase}
+.nv.on{opacity:1;color:var(--c1)}
+.nv .ni{font-size:20px}
+.nv.on .ni{filter:drop-shadow(0 0 6px rgba(79,142,247,.5))}
+
+/* MISC */
+.sl{font-size:11px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px}
+.empty{text-align:center;padding:50px 20px;color:var(--txt2);font-size:14px}
+.empty .ei{font-size:44px;margin-bottom:12px}
+.loading{text-align:center;padding:56px 20px}
+.spin{width:50px;height:50px;border:3px solid var(--bdr);border-top-color:var(--c1);border-radius:50%;animation:rot .7s linear infinite;margin:0 auto 20px}
+@keyframes rot{to{transform:rotate(360deg)}}
+.loading h3{font-family:'Syne',sans-serif;font-size:19px;font-weight:700;margin-bottom:8px}
+.loading p{color:var(--txt2);font-size:13px;line-height:1.7}
+.sep{height:1px;background:var(--bdr);margin:14px 0}
+.upzone{border:2px dashed var(--bdr);border-radius:var(--rL);padding:34px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--s2)}
+.upzone:hover,.upzone.drag{border-color:var(--c1);background:rgba(79,142,247,.04)}
+.prev-img{width:100%;border-radius:11px;max-height:250px;object-fit:cover;margin-top:12px}
+input[type=file]{display:none}
+.diff-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700}
+.diff-easy{background:rgba(0,212,160,.12);color:var(--c3)}
+.diff-med{background:rgba(245,166,35,.12);color:var(--c4)}
+.diff-hard{background:rgba(240,79,79,.12);color:var(--c5)}
+@media(max-width:500px){.act-grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+
+/* STREAK */
+.streak-bar{display:flex;align-items:center;gap:10px;background:var(--s1);border:1px solid var(--bdr);border-radius:var(--rL);padding:14px 16px;margin-bottom:14px}
+.streak-fire{font-size:28px;line-height:1}
+.streak-info{flex:1}
+.streak-num{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--c4);line-height:1}
+.streak-lbl{font-size:11px;color:var(--txt3);margin-top:2px}
+
+/* BADGES */
+.badges-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.badge-item{background:var(--s2);border:1px solid var(--bdr);border-radius:12px;padding:12px 8px;text-align:center;transition:all .2s}
+.badge-item.unlocked{border-color:var(--c4);background:rgba(232,154,30,.06)}
+.badge-item.locked{opacity:.35;filter:grayscale(1)}
+.badge-ico{font-size:24px;margin-bottom:5px}
+.badge-name{font-size:10px;color:var(--txt2);font-weight:500;line-height:1.3}
+
+/* TIMER */
+.timer-display{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;padding:6px 14px;border-radius:20px;background:var(--s2);border:1px solid var(--bdr)}
+.timer-display.warn{color:var(--c4);border-color:rgba(232,154,30,.3)}
+.timer-display.danger{color:var(--c5);border-color:rgba(232,68,68,.3);animation:pulse .6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* SPACED REPETITION */
+.sr-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--s2);border:1px solid var(--bdr);border-radius:11px;margin-bottom:8px}
+.sr-due{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+.sr-due.today{background:rgba(232,68,68,.12);color:var(--c5)}
+.sr-due.soon{background:rgba(232,154,30,.12);color:var(--c4)}
+.sr-due.later{background:rgba(0,200,150,.12);color:var(--c3)}
+
+/* PROGRESS CHART */
+.chart-wrap{background:var(--s2);border:1px solid var(--bdr);border-radius:var(--rL);padding:16px;margin-bottom:14px;overflow:hidden}
+
+/* OBJECTIF */
+.obj-bar{height:8px;background:var(--bdr);border-radius:4px;overflow:hidden;margin:8px 0}
+.obj-fill{height:100%;border-radius:4px;transition:width .5s}
+
+/* FICHE */
+@media print{body::before{display:none}.nav,.hdr,.btn{display:none!important}#app{padding:0}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="modal-root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" async></script>
+<script type="module">
+import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import{getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import{getFirestore,doc,setDoc,onSnapshot}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const firebaseConfig={
+  apiKey:"AIzaSyAAePd1ygR8Xe68UCAqhKEi9dWke7VcoP8",
+  authDomain:"reviseia-d0576.firebaseapp.com",
+  projectId:"reviseia-d0576",
+  storageBucket:"reviseia-d0576.firebasestorage.app",
+  messagingSenderId:"155556326492",
+  appId:"1:155556326492:web:32cdd8f0988ca159e30a99"
+};
+
+const safeRender=()=>window._appRender?.();
+const safeToast=(m)=>window._appToast?.(m);
+
+let _auth,_db,_user=null,_unsubHistory;
+
+function initFirebase(){
+  try{
+    const app=initializeApp(firebaseConfig,'reviseia');
+    _auth=getAuth(app);
+    _db=getFirestore(app);
+    onAuthStateChanged(_auth,user=>{
+      _user=user;
+      window._fbUser=user||null;
+      if(user) subscribeToCloud();
+      else if(_unsubHistory){_unsubHistory();_unsubHistory=null;}
+      // render() apres que le script principal soit charge
+      if(typeof window._appRender==='function') safeRender();
+      else window.addEventListener('load',safeRender,{once:true});
+    });
+  }catch(e){console.error('Firebase init error:',e);}
+}
+
+window.signInWithGoogle=async function(){
+  if(!_auth){safeToast('⚠️ Firebase non initialisé.');return;}
+  try{
+    await signInWithPopup(_auth,new GoogleAuthProvider());
+  }catch(e){
+    if(e.code==='auth/popup-blocked')safeToast('⚠️ Popup bloquée — autorise les popups.');
+    else safeToast('❌ Connexion échouée : '+e.message);
+  }
+};
+
+window.signOutUser=async function(){
+  if(!_auth)return;
+  if(_unsubHistory){_unsubHistory();_unsubHistory=null;}
+  await signOut(_auth);
+  safeToast('👋 Déconnecté');
+};
+
+let _syncPaused=false;
+
+async function cloudSave(key,value){
+  if(!_db||!_user||_syncPaused)return;
+  try{
+    await setDoc(doc(_db,'users',_user.uid,'data',key),{value,updatedAt:Date.now()});
+  }catch(e){console.warn('Cloud save failed:',e);}
+}
+
+function subscribeToCloud(){
+  if(!_db||!_user)return;
+  _unsubHistory=onSnapshot(doc(_db,'users',_user.uid,'data','history'),snap=>{
+    if(snap.exists()&&snap.data()?.value){
+      _syncPaused=true;
+      if(window.S)window.S.history=snap.data().value;
+      window.DB?.set('history',snap.data().value);
+      _syncPaused=false;
+      if(document.getElementById('app'))safeRender();
+    }
+  });
+  onSnapshot(doc(_db,'users',_user.uid,'data','mastery'),snap=>{
+    if(snap.exists()&&snap.data()?.value){
+      _syncPaused=true;
+      if(window.SubjectMastery!==undefined)window.SubjectMastery=snap.data().value;
+      window.DB?.set('mastery',snap.data().value);
+      _syncPaused=false;
+    }
+  });
+}
+
+window._cloudSave=cloudSave;
+window._hasFBConfig=()=>true;
+window._isLoggedIn=()=>!!_user;
+window._getUserInfo=()=>_user?{name:_user.displayName,photo:_user.photoURL,email:_user.email}:null;
+window._resetFBConfig=()=>safeToast('Config Firebase réinitialisée.');
+
+initFirebase();
+</script>
+<script>
+// ════════════════════════════════════════════════════
+// STORAGE
+// ════════════════════════════════════════════════════
+const DB={
+  get:(k)=>{try{return JSON.parse(localStorage.getItem('ria3_'+k)||'null')}catch{return null}},
+  set:(k,v)=>{localStorage.setItem('ria3_'+k,JSON.stringify(v));if(window._cloudSave)window._cloudSave(k,v);return v},
+};
+
+// ════════════════════════════════════════════════════
+// MIGRATION DES DONNÉES — préserve les données lors des mises à jour
+// ════════════════════════════════════════════════════
+const APP_VERSION=4; // Incrémenter à chaque mise à jour majeure
+function migrateData(){
+  const savedVersion=DB.get('appVersion')||0;
+  if(savedVersion===APP_VERSION)return; // Déjà à jour
+
+  // Migration v1→v2 : ajout du champ 'confidence' dans history
+  const history=DB.get('history')||[];
+  const migrated=history.map(entry=>{
+    if(!entry.confidence)entry.confidence=null;
+    if(!entry.quizType)entry.quizType='mixte';
+    // Compatibilité : recalcul pct si manquant
+    if(!entry.pct&&entry.correct&&entry.total)
+      entry.pct=Math.round(entry.correct/entry.total*100);
+    return entry;
+  });
+  if(migrated.length)DB.set('history',migrated);
+
+  // Migration v3→v4 : SubjectMastery recalcul depuis history
+  const mastery=DB.get('mastery')||{};
+  migrated.forEach(entry=>{
+    if(entry.subject&&entry.pct){
+      if(!mastery[entry.subject])mastery[entry.subject]={quizzes:[],avgPct:0};
+      const already=mastery[entry.subject].quizzes.find(q=>Math.abs(q.pct-entry.pct)<0.1);
+      if(!already)mastery[entry.subject].quizzes.push({pct:entry.pct,date:entry.date});
+    }
+  });
+  Object.keys(mastery).forEach(s=>{
+    const all=mastery[s].quizzes;
+    mastery[s].avgPct=all.length?Math.round(all.reduce((a,b)=>a+b.pct,0)/all.length):0;
+  });
+  DB.set('mastery',mastery);
+
+  DB.set('appVersion',APP_VERSION);
+  console.log(`RéviseIA : migration v${savedVersion}→v${APP_VERSION} effectuée`);
+}
+migrateData();
+
+// ════════════════════════════════════════════════════
+// PARAMÈTRES
+// ════════════════════════════════════════════════════
+let Settings=DB.get('settings')||{theme:'dark',fontSize:'md',level:'college'};
+
+function applySettings(){
+  const b=document.body;
+  b.classList.toggle('light',Settings.theme==='light');
+  b.classList.remove('fs-sm','fs-md','fs-lg');
+  b.classList.add('fs-'+(Settings.fontSize||'md'));
+}
+
+function saveSetting(key,val){
+  Settings[key]=val;
+  DB.set('settings',Settings);
+  applySettings();
+  render();
+}
+function getLevel(){return Settings.level||'college';}
+
+// ════════════════════════════════════════════════════
+// SYSTÈME PRO & PARRAINAGE
+// ════════════════════════════════════════════════════
+
+// ════════════════════════════════════════════════════
+// STREAKS — jours consécutifs de révision
+// ════════════════════════════════════════════════════
+let StreakData=DB.get('streak')||{current:0,best:0,lastDate:null};
+function checkStreak(){
+  const today=new Date().toDateString();
+  const last=StreakData.lastDate;
+  if(last===today)return; // Déjà compté aujourd'hui
+  const yesterday=new Date(Date.now()-86400000).toDateString();
+  if(last===yesterday){
+    StreakData.current++;
+  } else if(last!==today){
+    StreakData.current=1; // Streak cassé ou nouveau
+  }
+  StreakData.best=Math.max(StreakData.best,StreakData.current);
+  StreakData.lastDate=today;
+  DB.set('streak',StreakData);
+}
+
+// ════════════════════════════════════════════════════
+// BADGES
+// ════════════════════════════════════════════════════
+const BADGES_DEF=[
+  {id:'first_quiz', ico:'🎯', name:'Premier quiz', desc:'Faire son premier quiz', check:()=>S.history.length>=1},
+  {id:'perfect',   ico:'💯', name:'Parfait',       desc:'Obtenir 20/20',          check:()=>S.history.some(h=>h.pct>=100)},
+  {id:'streak3',   ico:'🔥', name:'3 jours',       desc:'3 jours de suite',       check:()=>StreakData.current>=3},
+  {id:'streak7',   ico:'⚡', name:'Une semaine',   desc:'7 jours de suite',       check:()=>StreakData.current>=7},
+  {id:'quiz10',    ico:'📚', name:'Assidu',         desc:'10 quiz faits',          check:()=>S.history.length>=10},
+  {id:'quiz50',    ico:'🏆', name:'Champion',       desc:'50 quiz faits',          check:()=>S.history.length>=50},
+  {id:'allsubj',   ico:'🌟', name:'Polyvalent',     desc:'5 matières différentes', check:()=>new Set(S.history.map(h=>h.subject)).size>=5},
+];
+let EarnedBadges=DB.get('badges')||[];
+function checkBadges(){
+  let newBadge=false;
+  BADGES_DEF.forEach(b=>{
+    if(!EarnedBadges.includes(b.id)&&b.check()){
+      EarnedBadges.push(b.id);
+      newBadge=b;
+    }
+  });
+  if(newBadge){
+    DB.set('badges',EarnedBadges);
+    setTimeout(()=>toast(`🏅 Badge débloqué : ${newBadge.name} ${newBadge.ico}`),500);
+  }
+  DB.set('badges',EarnedBadges);
+}
+
+// ════════════════════════════════════════════════════
+// RÉVISION ESPACÉE (Spaced Repetition)
+// ════════════════════════════════════════════════════
+let SRData=DB.get('sr')||{}; // {questionHash: {nextReview, interval, ease}}
+function srHash(q){return q.question?.slice(0,30).replace(/\s/g,'_')||'q';}
+function srUpdate(question,correct){
+  const h=srHash(question);
+  const sr=SRData[h]||{interval:1,ease:2.5,nextReview:null};
+  if(correct){
+    sr.interval=Math.round(sr.interval*sr.ease);
+    sr.ease=Math.min(3.0,sr.ease+0.1);
+  } else {
+    sr.interval=1;
+    sr.ease=Math.max(1.3,sr.ease-0.2);
+  }
+  sr.nextReview=Date.now()+sr.interval*86400000;
+  SRData[h]=sr;
+  DB.set('sr',SRData);
+}
+function srDueToday(){
+  const now=Date.now();
+  return Object.entries(SRData)
+    .filter(([,v])=>v.nextReview&&v.nextReview<=now)
+    .length;
+}
+function srGetDueQuestions(){
+  const now=Date.now();
+  const due=[];
+  S.history.forEach(entry=>{
+    if(!entry.quiz)return;
+    entry.quiz.questions.forEach((q,i)=>{
+      const h=srHash(q);
+      const sr=SRData[h];
+      if(!sr||sr.nextReview<=now){
+        const wasWrong=entry.corrections&&!entry.corrections[i]?.correct;
+        if(wasWrong||!sr)due.push({...q,subject:entry.subject});
+      }
+    });
+  });
+  // Déduplique
+  const seen=new Set();
+  return due.filter(q=>{
+    const h=srHash(q);
+    if(seen.has(h))return false;
+    seen.add(h);
+    return true;
+  }).slice(0,10);
+}
+
+// ════════════════════════════════════════════════════
+// OBJECTIFS DE NOTE
+// ════════════════════════════════════════════════════
+let Objectives=DB.get('objectives')||{}; // {subject: targetNote}
+function setObjective(subject,target){
+  Objectives[subject]=parseFloat(target);
+  DB.set('objectives',Objectives);
+}
+
+// ════════════════════════════════════════════════════
+// TIMER
+// ════════════════════════════════════════════════════
+let _timerInterval=null;
+function startTimer(seconds,onEnd){
+  clearInterval(_timerInterval);
+  S.timerLeft=seconds;S.timerTotal=seconds;
+  _timerInterval=setInterval(()=>{
+    S.timerLeft--;
+    // Update just the timer display without full re-render
+    const el=document.getElementById('timer-disp');
+    if(el){
+      const m=Math.floor(S.timerLeft/60);
+      const s=S.timerLeft%60;
+      el.textContent=`${m}:${String(s).padStart(2,'0')}`;
+      el.className='timer-display'+(S.timerLeft<=30?' danger':S.timerLeft<=60?' warn':'');
+    }
+    if(S.timerLeft<=0){clearInterval(_timerInterval);if(onEnd)onEnd();}
+  },1000);
+}
+function stopTimer(){clearInterval(_timerInterval);}
+
+// ════════════════════════════════════════════════════
+// MOTEUR NLP AVANCÉ
+// ════════════════════════════════════════════════════
+const STOPWORDS=new Set(['le','la','les','un','une','des','de','du','en','et','ou','mais','donc','or','ni','car','que','qui','dont','où','est','sont','être','avoir','a','au','aux','par','pour','sur','sous','dans','avec','sans','plus','très','aussi','si','tout','tous','cette','ces','mon','ton','son','ma','ta','sa','mes','tes','ses','leur','leurs','nous','vous','ils','elles','on','je','tu','il','elle','ce','se','ne','pas','bien','comme','même','alors','après','avant','quand','comment','pourquoi','quel','quelle','quels','quelles','cet','cela','ainsi','peut','doit','fait','sont','sera','serait','était','avait','entre','vers','peu','cas','deux','fois','lors','suite','donc','ceux','celles','celui','celle','leur','leurs','voici','voilà','c\'est','n\'est']);
+
+class NLP{
+  static tok(t){
+    return t.toLowerCase()
+      .replace(/['']/g,"'")
+      .replace(/[«»""]/g,'')
+      .replace(/[,;:!?()\[\]{}\-_/\\|]/g,' ')
+      .split(/[\s\n\r]+/)
+      .filter(w=>w.length>2&&!STOPWORDS.has(w)&&/[a-záéèêëàâùûüôîïçœæ]/i.test(w));
+  }
+
+  static freq(tokens){
+    const f={};
+    tokens.forEach(w=>f[w]=(f[w]||0)+1);
+    return f;
+  }
+
+  static extractConcepts(text,n=20){
+    const tokens=this.tok(text);
+    const f=this.freq(tokens);
+    // Bonus: mots techniques (capitalisés dans le texte original)
+    const caps=text.match(/\b[A-ZÁÉÈÊËÀÂÙÛÜÔÎÏÇ][a-záéèêëàâùûüôîïç]{3,}\b/g)||[];
+    caps.forEach(w=>{const lw=w.toLowerCase();if(!STOPWORDS.has(lw))f[lw]=(f[lw]||0)+3});
+    // Bonus: après ponctuation forte, définitions
+    const afterColon=text.match(/[:=]\s*([A-Za-záéèêëàâùûüôîïç]{4,})/g)||[];
+    afterColon.forEach(m=>{const w=m.replace(/[:=]\s*/,'').toLowerCase();if(!STOPWORDS.has(w))f[w]=(f[w]||0)+4});
+    // Bonus: bigrams (phrases de 2 mots fréquentes)
+    const bigrams={};
+    for(let i=0;i<tokens.length-1;i++){
+      if(tokens[i].length>3&&tokens[i+1].length>3){
+        const bg=tokens[i]+' '+tokens[i+1];
+        bigrams[bg]=(bigrams[bg]||0)+1;
+      }
+    }
+    // Ajouter les bigrams fréquents comme concepts
+    Object.entries(bigrams).filter(([,v])=>v>1).sort((a,b)=>b[1]-a[1]).slice(0,8)
+      .forEach(([bg,v])=>f[bg]=(f[bg]||0)+v*2);
+    return Object.entries(f).sort((a,b)=>b[1]-a[1]).slice(0,n).map(([w])=>w);
+  }
+
+  static extractDefinitions(text){
+    const defs=[];
+    const pats=[
+      /(?:^|\n|\.\s+)([A-Za-záéèêëàâùûüôîïçœ\s]{2,35}?)\s+(?:est|sont|désigne[nt]?|représente[nt]?|correspond[ent]?\s+à|constitue[nt]?|se définit? comme?)\s+([^.!?\n]{15,130})[.!?]/gi,
+      /(?:^|\n|\.\s+|:\s*)(?:le|la|les|un|une)?\s*([A-Za-záéèêëàâùûüôîïçœ\s]{3,30}?)\s*:\s*([^.\n!?]{15,130})[.!?\n]/gi,
+      /(?:on appelle|on nomme|on désigne par)\s+([A-Za-záéèêëàâùûüôîïçœ\s]{3,30})\s+([^.!?]{15,100})[.!?]/gi,
+      /([A-Za-záéèêëàâùûüôîïçœ\s]{3,30})\s+\(([^)]{8,80})\)/g,
+    ];
+    pats.forEach(p=>{
+      let m;p.lastIndex=0;
+      while((m=p.exec(text))!==null&&defs.length<16){
+        const term=m[1].trim().replace(/^(?:le|la|les|un|une)\s+/i,'');
+        const def=m[2].trim();
+        if(term.length>2&&def.length>10&&!STOPWORDS.has(term.toLowerCase()))
+          defs.push({term,def});
+      }
+    });
+    return defs;
+  }
+
+  static extractAffirmations(text){
+    return text.split(/(?<=[.!])\s+/)
+      .filter(s=>s.length>30&&s.length<200&&!s.includes('?')&&!s.match(/^(?:•|-|\*|\d+\.)/))
+      .map(s=>s.trim().replace(/^[a-z]/,c=>c.toUpperCase()))
+      .filter(s=>/\b(?:est|sont|peut|doit|permet|représente|constitue|joue)\b/i.test(s))
+      .slice(0,12);
+  }
+
+  static extractDates(text){
+    const dates=[];
+    // Pattern 1 : "En 1939, la guerre éclata" → capture AVANT et APRÈS
+    const re1=/([^.!?;\n]{5,60})\s+(\d{4})\s*[,:]?\s*([^.!?;\n]{0,60})/g;
+    let m;
+    while((m=re1.exec(text))!==null){
+      const y=parseInt(m[2]);
+      if(y<1000||y>2200)continue;
+      // Construire l'événement : contexte avant + date + contexte après
+      const before=m[1].trim().replace(/^(en|le|la|les|un|une|des|du|de)\s+/i,'');
+      const after=m[3].trim();
+      // Choisir la description la plus significative
+      const event = after.length>8 ? after : before;
+      if(event.length>5) dates.push({year:m[2],event:event.slice(0,80)});
+    }
+    // Pattern 2 : "1939 : début de la guerre"
+    const re2=/(\d{4})\s*[:\-–]\s*([^.!?;\n]{8,80})/g;
+    while((m=re2.exec(text))!==null){
+      const y=parseInt(m[1]);
+      if(y>1000&&y<2200) dates.push({year:m[1],event:m[2].trim().slice(0,80)});
+    }
+    // Déduplique et prend les plus pertinents
+    const seen=new Set();
+    return dates.filter(d=>{
+      if(seen.has(d.year+d.event.slice(0,20)))return false;
+      seen.add(d.year+d.event.slice(0,20));return true;
+    }).slice(0,6);
+  }
+
+  static extractNumbers(text){
+    // Pour les exercices de maths/physique
+    const nums=[];
+    const re=/(-?\d+(?:[.,]\d+)?)\s*(%|km|m|cm|mm|kg|g|mg|L|mL|°C|K|J|N|Pa|W|V|A|mol|s|min|h)?/g;
+    let m;
+    while((m=re.exec(text))!==null){
+      nums.push({val:parseFloat(m[1].replace(',','.')),unit:m[2]||''});
+    }
+    return nums;
+  }
+
+  static sentencesFor(text,concept,n=3){
+    return text.split(/[.!?]+\s+/)
+      .filter(s=>s.toLowerCase().includes(concept.toLowerCase()))
+      .slice(0,n);
+  }
+
+  static compareAnswers(userAns,modelAns){
+    if(!userAns||!modelAns)return 0;
+
+    // 1) Normaliser : minuscules, accents, ponctuation
+    const norm=(s)=>s.toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .replace(/[^a-z0-9\s]/g,' ')
+      .replace(/\s+/g,' ').trim();
+
+    const uNorm=norm(userAns);
+    const mNorm=norm(modelAns);
+
+    // 2) Stemming basique français (troncature)
+    const stem=(w)=>{
+      if(w.length<=4)return w;
+      // Supprimer terminaisons courantes
+      return w
+        .replace(/ations?$/,'at').replace(/ements?$/,'e')
+        .replace(/aient?$/,'').replace(/aient$/,'')
+        .replace(/aient$/,'ai').replace(/ees?$/,'e')
+        .replace(/iers?$/,'i').replace(/iques?$/,'iqu')
+        .replace(/aux$/,'al').replace(/aux$/,'al')
+        .replace(/[eéèêë]s?$/,'').replace(/s$/,'')
+        .slice(0,Math.max(4,w.length-2));
+    };
+
+    // 3) Synonymes / mots équivalents courants
+    const SYNONYMS={
+      'guerre':['conflit','combat','affrontement','belligerance'],
+      'conflit':['guerre','combat','affrontement'],
+      'mondial':['international','global','universel','monde'],
+      'commencer':['debuter','declencher','demarrer','commencer','debut'],
+      'finir':['terminer','fin','conclure','achever','cesser'],
+      'cause':['raison','origine','motif','facteur'],
+      'mort':['victime','deces','perte'],
+      'pays':['nation','etat','territoire'],
+      'important':['majeur','significatif','essentiel','capital','primordial'],
+    };
+
+    const expandSynonyms=(tokens)=>{
+      const expanded=new Set(tokens);
+      tokens.forEach(t=>{
+        Object.entries(SYNONYMS).forEach(([k,vs])=>{
+          if(k===t||vs.includes(t)){expanded.add(k);vs.forEach(v=>expanded.add(v));}
+        });
+      });
+      return expanded;
+    };
+
+    // 4) Distance de Levenshtein simplifiée (pour les fautes d'ortho)
+    const fuzzyMatch=(a,b)=>{
+      if(a===b)return 1;
+      if(Math.abs(a.length-b.length)>3)return 0;
+      let errors=0;
+      const minLen=Math.min(a.length,b.length);
+      for(let i=0;i<minLen;i++){if(a[i]!==b[i])errors++;}
+      errors+=Math.abs(a.length-b.length);
+      return errors<=2?1-errors/Math.max(a.length,b.length):0;
+    };
+
+    // 5) Extraire les nombres (1939, 1945 etc.)
+    const extractNums=(s)=>s.match(/\d{2,4}/g)||[];
+    const uNums=new Set(extractNums(uNorm));
+    const mNums=new Set(extractNums(mNorm));
+    let numScore=0;
+    if(mNums.size>0){
+      let numHits=0;mNums.forEach(n=>{if(uNums.has(n))numHits++;});
+      numScore=numHits/mNums.size;
+    }
+
+    // 6) Calcul principal avec stems + synonymes
+    const uToks=this.tok(uNorm).map(stem);
+    const mToks=this.tok(mNorm).map(stem);
+    if(uToks.length===0)return numScore*.5;
+
+    const uSet=expandSynonyms(uToks);
+    const mSet=expandSynonyms(mToks);
+
+    let overlap=0;
+    mToks.forEach(mt=>{
+      // Match exact sur stem
+      if(uSet.has(mt)){overlap++;return;}
+      // Match flou
+      for(const ut of uToks){
+        if(fuzzyMatch(ut,mt)>=0.75){overlap+=0.8;break;}
+      }
+    });
+
+    const precision=overlap/Math.max(uToks.length,1);
+    const recall=overlap/Math.max(mToks.length,1);
+    const f1=2*precision*recall/Math.max(precision+recall,.001);
+
+    // Score final : mix F1 + bonus nombres
+    return Math.min(1, f1*.8 + numScore*.2);
+  }
+
+  static detectSubject(text){
+    // Mots-clés avec poids (les plus spécifiques ont un poids plus élevé)
+    const kws={
+      '📐 Mathématiques':[
+        ['équation',3],['fonction',3],['variable',2],['intégrale',3],['dérivée',3],
+        ['polynôme',3],['théorème',2],['triangle',2],['cercle',2],['vecteur',3],
+        ['matrice',3],['logarithme',3],['probabilité',3],['statistique',2],
+        ['calcul',1],['algèbre',3],['géométrie',2],['racine',1],['carré',1],
+      ],
+      '⚗️ Physique-Chimie':[
+        ['atome',3],['molécule',3],['électron',3],['proton',3],['neutron',3],
+        ['réaction chimique',3],['ion',2],['oxyde',3],['acide',2],['base',1],
+        ['longueur onde',3],['circuit électrique',3],['résistance électrique',3],
+        ['courant électrique',3],['tension électrique',3],['énergie cinétique',3],
+        ['accélération',2],['fréquence',2],['photon',3],['mole',3],
+      ],
+      '🌍 Histoire-Géo':[
+        ['siècle',3],['révolution française',3],['guerre mondiale',3],['empire',2],
+        ['traité',2],['bataille',3],['colonie',3],['indépendance',2],['résistance',2],
+        ['déportation',3],['armistice',3],['constitution',2],['régime',2],
+        ['continent',2],['population',1],['migration',2],['frontière',2],
+        ['capitalisme',2],['communisme',2],['fascisme',3],['nazisme',3],
+        ['première guerre',3],['seconde guerre',3],['shoah',3],['démocratie',2],
+        ['monarchie',3],['dictature',3],['conquête',2],['découverte',1],
+      ],
+      '🧬 SVT / Biologie':[
+        ['cellule',3],['adn',3],['gène',3],['chromosome',3],['génotype',3],
+        ['photosynthèse',3],['mitose',3],['méiose',3],['protéine',2],['enzyme',3],
+        ['tissu',2],['organe',2],['espèce',2],['écosystème',3],['biodiversité',3],
+        ['évolution',2],['mutation',2],['allèle',3],['phénotype',3],
+      ],
+      '📖 Français / Littérature':[
+        ['auteur',2],['roman',3],['personnage',2],['narrateur',3],['genre littéraire',3],
+        ['poème',3],['vers',2],['strophe',3],['métaphore',3],['figure de style',3],
+        ['conjugaison',3],['subjonctif',3],['imparfait',2],['passé composé',2],
+        ['discours direct',3],['argumentation',2],['registre',2],['récit',2],
+      ],
+      '💰 Économie / SES':[
+        ['marché',2],['entreprise',1],['PIB',3],['inflation',3],['chômage',3],
+        ['mondialisation',3],['capitalisme',2],['offre et demande',3],
+        ['revenu',2],['salaire',2],['croissance économique',3],
+      ],
+      '🤔 Philosophie':[
+        ['conscience',3],['liberté',2],['vérité',2],['existence',2],
+        ['morale',2],['éthique',3],['bonheur',2],['désir',2],['volonté',2],
+        ['socrate',3],['platon',3],['aristote',3],['kant',3],['descartes',3],
+        ['rousseau',3],['nietzsche',3],['sartre',3],
+      ],
+      '🗣️ Langues':[
+        ['grammar',3],['verb',3],['tense',3],['vocabulary',3],['present perfect',3],
+        ['conditional',3],['passive voice',3],['subjunctive',3],
+      ],
+    };
+    const tl=text.toLowerCase();
+    let best='📚 Cours',bestScore=0;
+    for(const[subj,ks]of Object.entries(kws)){
+      // Score pondéré : chaque mot-clé a un poids
+      const score=ks.reduce((acc,[k,w])=>acc+(tl.includes(k)?w:0),0);
+      if(score>bestScore){best=subj;bestScore=score;}
+    }
+    return best;
+  }
+}
+
+// ════════════════════════════════════════════════════
+// SOLVEUR D'EXERCICES
+// ════════════════════════════════════════════════════
+class ExerciseSolver{
+  static solve(text){
+    const subject=NLP.detectSubject(text);
+    const lower=text.toLowerCase();
+    // Routage par matière
+    if(subject.includes('Mathématiques')||this._isMath(lower)) return this._solveMath(text);
+    if(subject.includes('Physique'))return this._solvePhysics(text);
+    if(subject.includes('SVT')||subject.includes('Biologie'))return this._solveBio(text);
+    if(subject.includes('Histoire'))return this._solveHistory(text);
+    if(subject.includes('Français'))return this._solveFrench(text);
+    return this._solveGeneral(text);
+  }
+
+  static _isMath(t){
+    return /\b(?:calculer?|résoudre?|trouver?|déterminer?|simplifier?|développer?|factoriser?|dériver?|intégrer?)\b/.test(t)||
+           /[+\-*/=<>^√∫]/.test(t)||
+           /\b(?:équation|inégalité|fonction|limite|dérivée|intégrale|probabilité|fraction|pourcentage|périmètre|aire|volume|angle)\b/.test(t);
+  }
+
+  static _solveMath(text){
+    const steps=[];
+    const lower=text.toLowerCase();
+    const subject='📐 Mathématiques';
+    const difficulty=this._detectDifficulty(text);
+
+    steps.push({title:'Lecture et identification',content:'Analyse de l\'exercice pour identifier le type de problème et les données.',sub:null});
+
+    // Détecter le type de problème math
+    if(lower.includes('pourcentage')||lower.includes('%')){
+      return this._solvePercentage(text,steps,subject,difficulty);
+    }
+    if(lower.includes('équation')&&/[a-x]\s*[=+\-*/]/.test(lower)){
+      return this._solveEquation(text,steps,subject,difficulty);
+    }
+    if(lower.includes('périmètre')||lower.includes('aire')||lower.includes('volume')){
+      return this._solveGeometry(text,steps,subject,difficulty);
+    }
+    if(lower.includes('probabilité')){
+      return this._solveProbability(text,steps,subject,difficulty);
+    }
+    if(lower.includes('suite')||lower.includes('terme')||lower.includes('raison')){
+      return this._solveSequence(text,steps,subject,difficulty);
+    }
+    // Calcul numérique générique
+    return this._solveNumeric(text,steps,subject,difficulty);
+  }
+
+  static _solvePercentage(text,steps,subject,difficulty){
+    const nums=NLP.extractNumbers(text);
+    const vals=nums.map(n=>n.val).filter(v=>v>0);
+    steps.push({title:'Type identifié : Calcul de pourcentage',content:'Les problèmes de pourcentage suivent la formule : Pourcentage = (Partie / Tout) × 100',formula:'P = (Valeur partielle / Valeur totale) × 100'});
+    if(text.includes('%')&&vals.length>=2){
+      const pct=vals.find(v=>v<=100);
+      const total=vals.find(v=>v!==pct);
+      if(pct&&total){
+        const result=Math.round(total*pct/100*100)/100;
+        steps.push({title:'Application de la formule',content:`Données extraites :\n• Pourcentage : ${pct}%\n• Valeur totale : ${total}`,formula:`Valeur = ${total} × ${pct} / 100 = ${result}`});
+        steps.push({title:'Vérification',content:`Pour vérifier : ${result} / ${total} × 100 = ${Math.round(result/total*100*100)/100}% ✓`});
+        return{subject,difficulty,steps,result:`${result}`,unit:'',explanation:`${pct}% de ${total} = ${result}`,relatedQuestions:this._genMathQs(text)};
+      }
+    }
+    steps.push({title:'Méthode générale',content:'1. Identifier la valeur totale (le "tout")\n2. Identifier la valeur partielle (la "partie")\n3. Appliquer : Pourcentage = (Partie / Tout) × 100\n4. Pour trouver la partie : Partie = Total × Pourcentage / 100'});
+    return{subject,difficulty,steps,result:null,explanation:'Applique la formule avec les valeurs de ton énoncé.',relatedQuestions:this._genMathQs(text)};
+  }
+
+  static _solveEquation(text,steps,subject,difficulty){
+    steps.push({title:'Type identifié : Résolution d\'équation',content:'Une équation cherche la valeur inconnue (x, y...) qui rend l\'égalité vraie.',formula:'ax + b = c → x = (c - b) / a'});
+    // Tenter de parser une équation simple ax+b=c
+    const eq=text.match(/(-?\d*)\s*[xX]\s*([+\-]\s*\d+)?\s*=\s*(-?\d+)/);
+    if(eq){
+      const a=parseFloat(eq[1]||'1')||1;
+      const b=parseFloat((eq[2]||'0').replace(/\s/g,''))||0;
+      const c=parseFloat(eq[3]);
+      const x=(c-b)/a;
+      steps.push({title:'Isoler l\'inconnue x',content:`Équation : ${a}x + (${b}) = ${c}\nOn isole x en passant les termes sans x de l'autre côté.`,formula:`${a}x = ${c} - (${b}) = ${c-b}`});
+      steps.push({title:'Division par le coefficient',content:`On divise les deux membres par ${a}.`,formula:`x = ${c-b} / ${a} = ${Math.round(x*1000)/1000}`});
+      steps.push({title:'Vérification',content:`Substitution : ${a} × ${Math.round(x*1000)/1000} + ${b} = ${Math.round((a*(c-b)/a+b)*1000)/1000} ≈ ${c} ✓`});
+      return{subject,difficulty,steps,result:`x = ${Math.round(x*1000)/1000}`,explanation:`La solution est x = ${Math.round(x*1000)/1000}`,relatedQuestions:this._genMathQs(text)};
+    }
+    steps.push({title:'Étapes de résolution',content:'1. Regrouper les termes avec x à gauche\n2. Regrouper les constantes à droite\n3. Diviser par le coefficient de x\n4. Vérifier en substituant dans l\'équation originale'});
+    return{subject,difficulty,steps,result:null,explanation:'Suis les 4 étapes ci-dessus avec ton équation.',relatedQuestions:this._genMathQs(text)};
+  }
+
+  static _solveGeometry(text,steps,subject,difficulty){
+    const lower=text.toLowerCase();
+    const nums=NLP.extractNumbers(text).map(n=>n.val).filter(v=>v>0);
+    steps.push({title:'Type identifié : Géométrie',content:'Identification des formules selon la figure géométrique mentionnée.'});
+    const formulas={
+      'carré':['Périmètre = 4 × côté','Aire = côté²'],
+      'rectangle':['Périmètre = 2 × (longueur + largeur)','Aire = longueur × largeur'],
+      'triangle':['Périmètre = a + b + c','Aire = (base × hauteur) / 2'],
+      'cercle':['Périmètre (circonférence) = 2π × rayon','Aire = π × rayon²'],
+      'cube':['Volume = arête³','Surface = 6 × arête²'],
+      'cylindre':['Volume = π × r² × h','Aire latérale = 2π × r × h'],
+    };
+    let detected='';
+    for(const[fig]of Object.entries(formulas)){
+      if(lower.includes(fig)){detected=fig;break;}
+    }
+    if(detected&&formulas[detected]){
+      steps.push({title:`Figure : ${detected.charAt(0).toUpperCase()+detected.slice(1)}`,content:`Formules applicables :`,formulas:formulas[detected]});
+      if(nums.length>0){
+        steps.push({title:'Application avec les valeurs de l\'énoncé',content:`Valeurs extraites : ${nums.join(', ')}\nRemplace ces valeurs dans la formule correspondante.`});
+      }
+    }
+    steps.push({title:'Conseil méthodologique',content:'• Dessine la figure et note les mesures données\n• Identifie ce qu\'on cherche (périmètre, aire, volume ?)\n• Choisis la bonne formule\n• Calcule étape par étape\n• Pense aux unités (m→m², m→m³)'});
+    return{subject,difficulty,steps,result:null,explanation:'Applique les formules adaptées à ta figure.',relatedQuestions:this._genMathQs(text)};
+  }
+
+  static _solveProbability(text,steps,subject,difficulty){
+    steps.push({title:'Type identifié : Probabilités',content:'La probabilité mesure la chance qu\'un événement se produise.',formula:'P(A) = Nombre de cas favorables / Nombre de cas possibles'});
+    steps.push({title:'Propriétés fondamentales',content:'• 0 ≤ P(A) ≤ 1\n• P(certain) = 1, P(impossible) = 0\n• P(Ā) = 1 - P(A) (événement contraire)\n• Si A et B sont indépendants : P(A∩B) = P(A) × P(B)\n• P(A∪B) = P(A) + P(B) - P(A∩B)'});
+    const nums=NLP.extractNumbers(text).map(n=>n.val);
+    if(nums.length>=2){
+      const fav=nums[0],total=nums[1];
+      const p=Math.round(fav/total*1000)/1000;
+      steps.push({title:'Calcul',content:`Cas favorables : ${fav}\nCas possibles : ${total}`,formula:`P = ${fav}/${total} = ${p} soit ${Math.round(p*100)}%`});
+      return{subject,difficulty,steps,result:`P = ${p} (${Math.round(p*100)}%)`,explanation:`La probabilité est de ${p}`,relatedQuestions:this._genMathQs(text)};
+    }
+    return{subject,difficulty,steps,result:null,explanation:'Identifie les cas favorables et les cas possibles.',relatedQuestions:this._genMathQs(text)};
+  }
+
+  static _solveSequence(text,steps,subject,difficulty){
+    steps.push({title:'Type identifié : Suites numériques',content:'Identification du type de suite (arithmétique ou géométrique).'});
+    steps.push({title:'Suite arithmétique',content:'Chaque terme = terme précédent + raison (r)\nFormule : u_n = u_0 + n×r\nSomme des n premiers termes : S = n × (u_0 + u_{n-1}) / 2',formula:'u_n = u_0 + n × r'});
+    steps.push({title:'Suite géométrique',content:'Chaque terme = terme précédent × raison (q)\nFormule : u_n = u_0 × q^n\nSomme : S = u_0 × (1 - q^n) / (1 - q) si q ≠ 1',formula:'u_n = u_0 × q^n'});
+    const nums=NLP.extractNumbers(text).map(n=>n.val).filter(v=>!isNaN(v));
+    if(nums.length>=3){
+      const diffs=nums.slice(1).map((v,i)=>v-nums[i]);
+      const isArith=diffs.every(d=>Math.abs(d-diffs[0])<0.001);
+      if(isArith){
+        const r=diffs[0];
+        const next=nums[nums.length-1]+r;
+        steps.push({title:'Analyse : Suite arithmétique détectée',content:`Raison r = ${r}\nProchain terme : ${nums[nums.length-1]} + ${r} = ${next}`,formula:`u_{n+1} = u_n + ${r}`});
+        return{subject,difficulty,steps,result:`Prochain terme : ${next}`,explanation:`Suite arithmétique de raison ${r}. Prochain terme : ${next}`,relatedQuestions:this._genMathQs(text)};
+      }
+      const ratios=nums.slice(1).map((v,i)=>v/nums[i]);
+      const isGeom=ratios.every(q=>Math.abs(q-ratios[0])<0.001)&&ratios[0]!==0;
+      if(isGeom){
+        const q=Math.round(ratios[0]*1000)/1000;
+        const next=Math.round(nums[nums.length-1]*q*1000)/1000;
+        steps.push({title:'Analyse : Suite géométrique détectée',content:`Raison q = ${q}\nProchain terme : ${nums[nums.length-1]} × ${q} = ${next}`,formula:`u_{n+1} = u_n × ${q}`});
+        return{subject,difficulty,steps,result:`Prochain terme : ${next}`,explanation:`Suite géométrique de raison ${q}. Prochain terme : ${next}`,relatedQuestions:this._genMathQs(text)};
+      }
+    }
+    return{subject,difficulty,steps,result:null,explanation:'Vérifie si la différence (ou le rapport) entre les termes est constant.',relatedQuestions:this._genMathQs(text)};
+  }
+
+  static _solveNumeric(text,steps,subject,difficulty){
+    const nums=NLP.extractNumbers(text);
+    steps.push({title:'Analyse des données',content:`Données numériques trouvées : ${nums.map(n=>n.val+(n.unit||'')).join(', ')||'Aucune valeur numérique extraite'}`});
+    const lower=text.toLowerCase();
+    // Calculs basiques
+    const ops=[];
+    if(lower.includes('somme')||lower.includes('additionner')||lower.includes('total'))ops.push('Addition');
+    if(lower.includes('différence')||lower.includes('soustraire')||lower.includes('enlever'))ops.push('Soustraction');
+    if(lower.includes('produit')||lower.includes('multiplier'))ops.push('Multiplication');
+    if(lower.includes('quotient')||lower.includes('diviser')||lower.includes('partager'))ops.push('Division');
+    if(ops.length>0){
+      steps.push({title:'Opération(s) identifiée(s)',content:ops.join(', ')});
+      const vals=nums.map(n=>n.val);
+      if(vals.length>=2){
+        const results={
+          'Addition':vals.reduce((a,b)=>a+b,0),
+          'Soustraction':vals.reduce((a,b)=>a-b),
+          'Multiplication':vals.reduce((a,b)=>a*b,1),
+          'Division':vals.reduce((a,b)=>a/b),
+        };
+        ops.forEach(op=>{
+          if(results[op]!==undefined)
+            steps.push({title:`Résultat (${op})`,content:`${vals.join(` ${op==='Addition'?'+':op==='Soustraction'?'-':op==='Multiplication'?'×':'÷'} `)} = ${Math.round(results[op]*10000)/10000}`,formula:`= ${Math.round(results[op]*10000)/10000}`});
+        });
+      }
+    }
+    steps.push({title:'Méthode recommandée',content:'1. Identifie toutes les données et leur unité\n2. Détermine l\'opération à effectuer\n3. Pose le calcul proprement\n4. Vérifie le résultat et l\'unité'});
+    return{subject,difficulty,steps,result:null,explanation:'Applique les opérations avec les valeurs de l\'énoncé.',relatedQuestions:this._genMathQs(text)};
+  }
+
+  static _solvePhysics(text,steps,subject,difficulty){
+    const lower=text.toLowerCase();
+    steps.push({title:'Lecture de l\'énoncé',content:'Identification des grandeurs physiques données et de la grandeur cherchée.'});
+    
+    const formulas={
+      vitesse:{kw:['vitesse','rapide','lent','déplacement'],f:'v = d / t (d=distance, t=temps)',inv:['d = v × t','t = d / v']},
+      force:{kw:['force','newton','accélération','masse'],f:'F = m × a (m=masse en kg, a=accélération en m/s²)',inv:['m = F / a','a = F / m']},
+      energie:{kw:['énergie','travail','puissance','joule'],f:'E = P × t (P=puissance en W, t=temps en s)',inv:['P = E / t','t = E / P']},
+      ohm:{kw:['tension','courant','résistance','volt','ampère','ohm'],f:'U = R × I (U=tension en V, R=résistance en Ω, I=courant en A)',inv:['R = U / I','I = U / R']},
+      pression:{kw:['pression','pascal','surface'],f:'P = F / S (F=force en N, S=surface en m²)',inv:['F = P × S','S = F / P']},
+      chaleur:{kw:['chaleur','température','thermique','calorique'],f:'Q = m × c × ΔT (c=chaleur spécifique, ΔT=variation de température)',inv:[]},
+    };
+
+    let detected=null;
+    for(const[name,data]of Object.entries(formulas)){
+      if(data.kw.some(k=>lower.includes(k))){detected={name,...data};break;}
+    }
+    if(detected){
+      steps.push({title:`Grandeur identifiée : ${detected.name.charAt(0).toUpperCase()+detected.name.slice(1)}`,content:`Formule principale :`,formula:detected.f});
+      if(detected.inv.length){
+        steps.push({title:'Formules dérivées',content:detected.inv.join('\n')});
+      }
+    }
+    steps.push({title:'Données de l\'énoncé',content:'• Identifie chaque grandeur et son unité\n• Convertis si nécessaire (km→m, h→s, km/h→m/s...)\n• Isole la grandeur cherchée\n• Applique la formule et calcule'});
+    steps.push({title:'Unités fréquentes',content:'Longueur : m / km (×1000) / cm (÷100)\nTemps : s / min (×60) / h (×3600)\nMasse : kg / g (÷1000)\nVitesse : m/s → km/h (×3.6)'});
+    const nums=NLP.extractNumbers(text);
+    if(nums.length>=2){
+      steps.push({title:'Valeurs extraites de l\'énoncé',content:nums.map(n=>`${n.val} ${n.unit}`).filter(s=>s.trim()).join(', ')});
+    }
+    return{subject:'⚗️ Physique-Chimie',difficulty,steps,result:null,explanation:'Applique la formule identifiée avec les valeurs de l\'énoncé.',relatedQuestions:this._genScienceQs(text)};
+  }
+
+  static _solveBio(text,steps,subject,difficulty){
+    steps.push({title:'Analyse de l\'exercice',content:'Identification du domaine de biologie/SVT concerné.'});
+    const domains={
+      'Génétique / ADN':['adn','gène','chromosome','génotype','phénotype','allèle','mutation','méiose','mitose'],
+      'Physiologie':['organe','tissu','cellule','enzyme','hormone','neurone','muscle','sang','respiration'],
+      'Écologie':['écosystème','chaîne alimentaire','espèce','biodiversité','photosynthèse','cycle'],
+      'Évolution':['évolution','sélection','naturelle','espèce','adaptation','fossile','ancêtre'],
+    };
+    const lower=text.toLowerCase();
+    let dom='SVT';
+    for(const[d,kws]of Object.entries(domains)){
+      if(kws.some(k=>lower.includes(k))){dom=d;break;}
+    }
+    steps.push({title:`Domaine : ${dom}`,content:'Voici la démarche méthodologique pour ce type d\'exercice.'});
+    steps.push({title:'Démarche scientifique',content:'1. 📋 Lire attentivement l\'énoncé et les documents\n2. 🔍 Identifier les informations importantes\n3. 💡 Mobiliser les connaissances du cours\n4. 📝 Rédiger en utilisant le vocabulaire scientifique\n5. ✅ Vérifier la cohérence de la réponse'});
+    
+    if(lower.includes('schéma')||lower.includes('dessin')){
+      steps.push({title:'Consignes pour le schéma',content:'• Titre centré et souligné\n• Légende complète avec flèches\n• Dessin propre et réaliste\n• Unités et échelle si demandées'});
+    }
+    if(lower.includes('calculer')||lower.includes('proportion')||lower.includes('ratio')){
+      const nums=NLP.extractNumbers(text).map(n=>n.val);
+      if(nums.length>=2){
+        const pct=Math.round(nums[0]/nums[1]*100*100)/100;
+        steps.push({title:'Calcul de proportion',content:`${nums[0]} / ${nums[1]} × 100 = ${pct}%`,formula:`Proportion = ${pct}%`});
+      }
+    }
+    return{subject:'🧬 SVT / Biologie',difficulty,steps,result:null,explanation:'Utilise le vocabulaire scientifique et sois précis dans tes réponses.',relatedQuestions:this._genScienceQs(text)};
+  }
+
+  static _solveHistory(text,steps,subject,difficulty){
+    steps.push({title:'Analyse de l\'exercice',content:'Identification du type de travail demandé en Histoire-Géographie.'});
+    const lower=text.toLowerCase();
+    const exTypes={
+      'Analyse de document':['analysez','expliquez','d\'après le document','source','extrait'],
+      'Composition / Dissertation':['rédigez','vous montrerez','développez','en vous appuyant'],
+      'Étude de carte':['carte','localiser','situer','délimiter'],
+      'Chronologie':['classez','datez','ordonnez','chronologique'],
+      'Vocabulaire':['définissez','qu\'est-ce que','signifie'],
+    };
+    let detectedType='Exercice général';
+    for(const[t,kws]of Object.entries(exTypes)){
+      if(kws.some(k=>lower.includes(k))){detectedType=t;break;}
+    }
+    steps.push({title:`Type d\'exercice : ${detectedType}`,content:this._historyMethodology(detectedType)});
+    // Extraire les dates mentionnées
+    const dates=NLP.extractDates(text);
+    if(dates.length>0){
+      steps.push({title:'Repères chronologiques identifiés',content:dates.map(d=>`• ${d.year} : ${d.event}`).join('\n')});
+    }
+    const concepts=NLP.extractConcepts(text,8);
+    if(concepts.length>0){
+      steps.push({title:'Notions clés à mobiliser',content:concepts.slice(0,6).map(c=>`• ${c}`).join('\n')});
+    }
+    return{subject:'🌍 Histoire-Géographie',difficulty,steps,result:null,explanation:'Suis la méthodologie adaptée au type d\'exercice.',relatedQuestions:this._genHistoryQs(text)};
+  }
+
+  static _historyMethodology(type){
+    const methods={
+      'Analyse de document':'1. Présenter le document (nature, auteur, date, contexte)\n2. Identifier les informations principales\n3. Confronter avec les connaissances du cours\n4. Porter un regard critique sur la source',
+      'Composition / Dissertation':'1. Analyser le sujet et les mots-clés\n2. Problématiser (poser une question centrale)\n3. Faire un plan en 2-3 parties\n4. Rédiger avec introduction + développement + conclusion',
+      'Étude de carte':'1. Lire la légende et le titre\n2. Identifier l\'espace représenté\n3. Décrire les grands traits\n4. Expliquer les phénomènes cartographiés',
+      'Chronologie':'1. Identifier toutes les dates\n2. Classer de la plus ancienne à la plus récente\n3. Relier chaque date à un événement précis',
+      'Vocabulaire':'1. Définir précisément le terme\n2. Donner un exemple\n3. Situer dans le contexte historique',
+    };
+    return methods[type]||'Lis attentivement l\'énoncé, mobilise tes connaissances et rédige avec des exemples précis.';
+  }
+
+  static _solveFrench(text,steps,subject,difficulty){
+    steps.push({title:'Analyse de l\'exercice de français',content:'Identification du type de travail demandé.'});
+    const lower=text.toLowerCase();
+    if(lower.includes('conjugu')||lower.includes('verbe')||lower.includes('temps')){
+      steps.push({title:'Type : Conjugaison',content:'Méthode :\n1. Identifier le sujet (qui fait l\'action ?)\n2. Trouver l\'infinitif du verbe\n3. Repérer le temps demandé\n4. Appliquer les terminaisons'});
+      steps.push({title:'Rappel des temps principaux',content:'• Présent : je parle, tu parles, il parle...\n• Imparfait : je parlais (décrit une habitude ou un état passé)\n• Futur simple : je parlerai\n• Passé composé : j\'ai parlé\n• Conditionnel : je parlerais (hypothèse)'});
+    } else if(lower.includes('figure')||lower.includes('métaphore')||lower.includes('comparaison')){
+      steps.push({title:'Type : Figures de style',content:'Principales figures à connaître :\n• Métaphore : comparaison sans "comme" ("La vie est un voyage")\n• Comparaison : avec outil de comparaison ("doux comme...")\n• Personnification : attribuer des traits humains à un objet\n• Hyperbole : exagération ("mourir de rire")\n• Anaphore : répétition en début de phrase'});
+    } else if(lower.includes('résumé')||lower.includes('synthèse')){
+      steps.push({title:'Type : Résumé / Synthèse',content:'Méthode :\n1. Lire le texte en entier\n2. Identifier les idées principales\n3. Supprimer les exemples et répétitions\n4. Reformuler avec ses propres mots\n5. Vérifier : le résumé doit faire ~1/4 du texte original'});
+    } else {
+      steps.push({title:'Analyse de texte',content:'Méthode :\n1. Identifier le genre littéraire (roman, poème, théâtre...)\n2. Repérer la situation d\'énonciation (qui ? à qui ? quand ?)\n3. Analyser le fond (thèmes, idées)\n4. Analyser la forme (style, vocabulaire, figures)'});
+    }
+    return{subject:'📖 Français / Littérature',difficulty,steps,result:null,explanation:'Suis la méthode adaptée et utilise des exemples tirés du texte.',relatedQuestions:this._genFrenchQs(text)};
+  }
+
+  static _solveGeneral(text,steps,subject,difficulty){
+    const concepts=NLP.extractConcepts(text,10);
+    const defs=NLP.extractDefinitions(text);
+    steps.push({title:'Analyse de l\'exercice',content:'Décomposition du problème en éléments clés.'});
+    if(concepts.length>0)steps.push({title:'Notions clés identifiées',content:concepts.slice(0,6).map(c=>`• ${c}`).join('\n')});
+    if(defs.length>0)steps.push({title:'Définitions importantes',content:defs.slice(0,3).map(d=>`• ${d.term} : ${d.def}`).join('\n\n')});
+    steps.push({title:'Démarche recommandée',content:'1. Lire l\'énoncé en entier\n2. Identifier ce qu\'on cherche\n3. Rassembler les informations utiles\n4. Appliquer les connaissances du cours\n5. Rédiger une réponse structurée avec exemples'});
+    return{subject:NLP.detectSubject(text),difficulty,steps,result:null,explanation:'Mobilise tes connaissances de cours et sois précis dans ta réponse.',relatedQuestions:this._genGeneralQs(text)};
+  }
+
+  static _detectDifficulty(text){
+    const lower=text.toLowerCase();
+    const hardKws=['dériver','intégrer','démontrer','prouver','complexe','matrice','déterminant','logarithme'];
+    const medKws=['équation','fonction','probabilité','géométrie','statistique'];
+    if(hardKws.some(k=>lower.includes(k)))return'hard';
+    if(medKws.some(k=>lower.includes(k)))return'med';
+    return'easy';
+  }
+
+  static _genMathQs(text){
+    return[
+      {q:'Comment vérifier ton résultat ?',a:'Substitue la réponse dans l\'équation/formule initiale et vérifie que l\'égalité est satisfaite.'},
+      {q:'Quelles sont les erreurs fréquentes en maths ?',a:'Oublier les unités, erreur de signe, division par zéro, ne pas simplifier les fractions.'},
+      {q:'Comment poser un calcul proprement ?',a:'Écris chaque étape sur une ligne, garde l\'égalité alignée, et indique les unités à chaque étape.'},
+    ];
+  }
+
+  static _genScienceQs(text){
+    return[
+      {q:'Comment rédiger une conclusion scientifique ?',a:'Rappelle la question, résume les résultats, réponds à la question de départ, ouvre vers une perspective.'},
+      {q:'Comment lire un graphique ?',a:'Lis le titre, les axes (grandeur + unité), identifie les tendances, repère les valeurs remarquables.'},
+    ];
+  }
+
+  static _genHistoryQs(text){
+    return[
+      {q:'Qu\'est-ce qu\'une problématique en histoire ?',a:'Une question à laquelle tu vas répondre tout au long de ta composition, qui n\'a pas de réponse évidente par oui/non.'},
+      {q:'Comment citer un document historique ?',a:'Nomme le document, son auteur, sa date, et cite l\'extrait entre guillemets avant d\'analyser.'},
+    ];
+  }
+
+  static _genFrenchQs(text){
+    return[
+      {q:'Quelle est la différence entre narrateur et auteur ?',a:'L\'auteur est la personne réelle qui écrit. Le narrateur est la voix dans le texte, qui peut être un personnage fictif.'},
+      {q:'Comment identifier le point de vue narratif ?',a:'Interne : je vis les événements. Externe : observation de l\'extérieur. Omniscient : le narrateur sait tout.'},
+    ];
+  }
+
+  static _genGeneralQs(text){
+    const concepts=NLP.extractConcepts(text,3);
+    return concepts.map(c=>({q:`Explique la notion de "${c}" avec tes propres mots.`,a:`Cherche la définition de ${c} dans ton cours et formule-la simplement.`}));
+  }
+}
+
+// ════════════════════════════════════════════════════
+// GÉNÉRATEUR DE QUIZ AMÉLIORÉ
+// ════════════════════════════════════════════════════
+class QuizEngine{
+  static generate(text,opts){
+    const{type='mixte',numQ=8,level='college'}=opts;
+    const defs=NLP.extractDefinitions(text);
+    const concepts=NLP.extractConcepts(text,25);
+    const affs=NLP.extractAffirmations(text);
+    const dates=NLP.extractDates(text);
+
+    const questions=[];
+    const seen=new Set();
+    const add=(q)=>{
+      if(q&&!seen.has(q.question.toLowerCase().slice(0,40))){
+        seen.add(q.question.toLowerCase().slice(0,40));
+        questions.push(q);
+      }
+    };
+
+    // 1. QCM depuis définitions (très bonnes questions)
+    for(const def of defs){
+      if(questions.length>=numQ)break;
+      const t=this._pickType(type,questions.length,numQ);
+      if(t==='qcm')add(this._qcmFromDef(def,defs,text));
+      else if(t==='ouverte')add({type:'ouverte',question:`Explique ce qu'est "${def.term}".`,modelAnswer:def.def,explanation:def.def});
+      else add({type:'vtf',question:`"${def.term}" désigne ${def.def.slice(0,70)}.`,answer:'Vrai',explanation:`D'après le cours : ${def.term} est ${def.def}`});
+    }
+
+    // 3. Vrai/Faux depuis affirmations
+    for(const aff of affs){
+      if(questions.length>=numQ)break;
+      if(!['mixte','vtf'].includes(type))continue;
+      const q=this._vtfFromAff(aff);
+      add(q);
+    }
+
+    // 4. Questions depuis dates
+    for(const d of dates){
+      if(questions.length>=numQ)break;
+      if(!['mixte','qcm'].includes(type))continue;
+      add(this._qcmFromDate(d));
+    }
+
+    // 5. Questions depuis concepts
+    for(const c of concepts){
+      if(questions.length>=numQ)break;
+      const t=this._pickType(type,questions.length,numQ);
+      const sents=NLP.sentencesFor(text,c,3);
+      if(sents.length===0)continue;
+      if(t==='qcm')add(this._qcmFromConcept(c,sents,concepts,text));
+      else if(t==='ouverte')add(this._openFromConcept(c,sents,level));
+    }
+
+    const final=questions.slice(0,numQ);
+    if(final.length===0)return null;
+    return{subject:NLP.detectSubject(text),questions:final};
+  }
+
+  static _pickType(mode,idx,total){
+    if(mode==='qcm')return'qcm';
+    if(mode==='ouverte')return'ouverte';
+    if(mode==='vtf')return'vtf';
+    const cycle=['qcm','qcm','ouverte','vtf','qcm','ouverte','vtf','qcm','qcm','ouverte'];
+    return cycle[idx%cycle.length];
+  }
+
+  static _qcmFromDef(def,allDefs,text){
+    // Mélanger les distracteurs : autres définitions + variantes générées
+    const wrongDefs=allDefs.filter(d=>d.term!==def.term).map(d=>d.def.slice(0,80));
+    const generatedWrongs=this._generateDistractors(def.def,text);
+    const wrongs=[...wrongDefs,...generatedWrongs].filter((v,i,a)=>a.indexOf(v)===i).slice(0,3);
+    if(wrongs.length<2)return null;
+    const choices=[def.def.slice(0,80),...wrongs.slice(0,3)].sort(()=>Math.random()-.5);
+    const ci=choices.indexOf(def.def.slice(0,80));
+    const qVariants=[
+      `Qu'est-ce que "${def.term}" ?`,
+      `Quelle est la définition de "${def.term}" ?`,
+      `Comment définit-on "${def.term}" ?`,
+      `"${def.term}" correspond à quoi ?`,
+    ];
+    return{type:'qcm',question:qVariants[Math.floor(Math.random()*qVariants.length)],choices,correctIndex:ci,explanation:`${def.term} : ${def.def}`};
+  }
+
+  static _generateDistractors(correct,text){
+    const concepts=NLP.extractConcepts(text,30);
+    const defs=NLP.extractDefinitions(text);
+    // Prend d'autres définitions proches
+    const others=defs.map(d=>d.def.slice(0,80)).filter(d=>d!==correct.slice(0,80));
+    // Génère des distracteurs plausibles en modifiant la bonne réponse
+    const words=correct.split(' ');
+    if(words.length>4){
+      const mod1=words.map((w,i)=>i===Math.floor(words.length/2)?concepts[Math.floor(Math.random()*concepts.length)]||w:w).join(' ').slice(0,80);
+      others.push(mod1);
+    }
+    others.push('Aucune de ces propositions');
+    return others;
+  }
+
+  static _vtfFromAff(aff){
+    const makeNeg=(s)=>{
+      if(/\best\b/.test(s))return s.replace(/\best\b/,'n\'est pas');
+      if(/\bsont\b/.test(s))return s.replace(/\bsont\b/,'ne sont pas');
+      if(/\bpermet\b/.test(s))return s.replace(/\bpermet\b/,'ne permet pas');
+      if(/\bjoue\b/.test(s))return s.replace(/\bjoue\b/,'ne joue pas');
+      return null;
+    };
+    const useNeg=Math.random()>.5;
+    if(useNeg){
+      const neg=makeNeg(aff);
+      if(neg)return{type:'vtf',question:neg,answer:'Faux',explanation:`L'affirmation correcte est : ${aff}`};
+    }
+    return{type:'vtf',question:aff,answer:'Vrai',explanation:`Cette affirmation est correcte d'après le cours.`};
+  }
+
+  static _qcmFromDate(d){
+    // Vérifier que l'événement forme une question sensée
+    if(!d.event||d.event.length<5)return null;
+    // Nettoyer l'événement pour qu'il soit lisible
+    let ev=d.event.trim();
+    // Capitaliser la première lettre
+    ev=ev.charAt(0).toUpperCase()+ev.slice(1);
+    // S'assurer que la question a du sens
+    const q=`En quelle année ${ev.endsWith('?')?ev.slice(0,-1):ev} ?`;
+    // Vérification : la question doit faire plus de 15 chars et ne pas être absurde
+    if(q.length<20)return null;
+    const y=parseInt(d.year);
+    const wrongs=[String(y-2),String(y+3),String(y-7),String(y+10)].filter(v=>v!==d.year).slice(0,3);
+    if(wrongs.length<2)return null;
+    const choices=[d.year,...wrongs].sort(()=>Math.random()-.5);
+    return{type:'qcm',question:q,choices,correctIndex:choices.indexOf(d.year),explanation:`C'est en ${d.year} que ${ev.toLowerCase()}.`};
+  }
+
+  static _qcmFromConcept(c,sents,allConcepts,text){
+    const correctA=sents[0].slice(0,100);
+    // Vérification : la bonne réponse doit avoir du sens (>15 chars)
+    if(correctA.length<15)return null;
+    const wrongs=allConcepts.filter(oc=>oc!==c).slice(0,5)
+      .map(oc=>{const s=NLP.sentencesFor(text,oc,1);return s[0]?.slice(0,100)||null;})
+      .filter(w=>w&&w.length>10&&w!==correctA);
+    if(wrongs.length<2)return null;
+    const choices=[correctA,...wrongs.slice(0,3)].sort(()=>Math.random()-.5);
+    const ci=choices.indexOf(correctA);
+    if(ci===-1)return null;
+    const tpls=[
+      `Laquelle de ces affirmations est correcte concernant "${c}" ?`,
+      `Parmi ces propositions, laquelle décrit correctement "${c}" ?`,
+      `Qu'affirme le cours à propos de "${c}" ?`,
+      `Quelle est l'affirmation vraie sur "${c}" ?`,
+    ];
+    const q=tpls[Math.floor(Math.random()*tpls.length)];
+    return{type:'qcm',question:q,choices,correctIndex:ci,explanation:`D'après le cours : ${correctA}`};
+  }
+
+  static _openFromConcept(c,sents,level='college'){
+    const modelAns=sents.join(' ');
+    // Templates par niveau
+    const tplsBase=[
+      `Explique en tes propres mots ce qu'est "${c}".`,
+      `Qu'est-ce que "${c}" ? Donne une définition et un exemple.`,
+      `Décris "${c}" d'après ce que tu as appris dans le cours.`,
+    ];
+    const tplsAvance=[
+      `Explique le rôle de "${c}" et son importance dans ce contexte.`,
+      `En quoi "${c}" est-il important ? Justifie avec des éléments du cours.`,
+      `Analyse le concept de "${c}" : définition, causes et conséquences.`,
+      `Comment "${c}" s'inscrit-il dans le contexte étudié ? Développe.`,
+    ];
+    const tpls=level==='lycee'||level==='superieur'?[...tplsBase,...tplsAvance]:tplsBase;
+    const q=tpls[Math.floor(Math.random()*tpls.length)];
+    return{type:'ouverte',question:q,modelAnswer:modelAns,explanation:modelAns};
+  }
+
+  static correct(question,userAnswer){
+    const{type}=question;
+    if(type==='qcm'){
+      const idx=parseInt(userAnswer);
+      const ok=idx===question.correctIndex;
+      return{correct:ok,explanation:question.explanation||(ok?'✅ Bonne réponse !':'❌ '+question.choices?.[question.correctIndex]),modelAnswer:question.choices?.[question.correctIndex]};
+    }
+    if(type==='vtf'){
+      const ok=userAnswer===question.answer;
+      return{correct:ok,explanation:question.explanation||(ok?'✅ Bonne réponse !':'❌ La réponse est '+question.answer),modelAnswer:question.answer};
+    }
+    if(type==='ouverte'){
+      const score=NLP.compareAnswers(userAnswer,question.modelAnswer||question.answer||'');
+      // Seuils plus intelligents
+      const ok=score>.18;
+      const good=score>.45;
+      const pct=Math.round(score*100);
+
+      let exp='';
+      if(good){
+        exp=`✅ Bonne réponse ! Tu as bien couvert les éléments essentiels.\n\nRéponse de référence : ${question.modelAnswer||question.explanation}`;
+      } else if(ok){
+        exp=`✅ Réponse acceptée — tu as les idées principales mais elle pourrait être plus complète.\n\nRéponse de référence : ${question.modelAnswer||question.explanation}`;
+      } else {
+        // Chercher ce qui manque vraiment
+        const modelWords=NLP.tok(question.modelAnswer||'');
+        const userWords=new Set(NLP.tok(userAnswer));
+        const missing=modelWords.filter(w=>!userWords.has(w)&&w.length>4).slice(0,3);
+        exp=`❌ Réponse incomplète. ${missing.length?`Mots-clés manquants : ${missing.join(', ')}.`:''}\n\nRéponse attendue : ${question.modelAnswer||question.explanation}`;
+      }
+      return{correct:ok,explanation:exp,modelAnswer:question.modelAnswer||question.explanation};
+    }
+    return{correct:false,explanation:'Réponse non évaluée'};
+  }
+}
+
+// ════════════════════════════════════════════════════
+// ANALYSEUR DE CONFIANCE — AUTO-DIAGNOSTIC RÉEL
+// ════════════════════════════════════════════════════
+class ConfidenceAnalyzer{
+  // Analyse honnête du texte AVANT de générer le quiz
+  // Retourne un rapport détaillé de ce que l'IA peut ou ne peut pas faire
+  static analyze(text,numQ=8){
+    const words=text.trim().split(/\s+/).filter(Boolean);
+    const wordCount=words.length;
+    const defs=NLP.extractDefinitions(text);
+    const concepts=NLP.extractConcepts(text,30);
+    const affs=NLP.extractAffirmations(text);
+    const dates=NLP.extractDates(text);
+    const subject=NLP.detectSubject(text);
+    const sentences=text.split(/[.!?]+/).filter(s=>s.trim().length>20);
+
+    // Scores par dimension (0-100 chacun)
+    const scores={
+      longueur: Math.min(100, Math.round(wordCount/300*100)),        // cible : 300 mots
+      definitions: Math.min(100, Math.round(defs.length/4*100)),    // cible : 4 définitions
+      concepts: Math.min(100, Math.round(concepts.length/10*100)),  // cible : 10 concepts
+      affirmations: Math.min(100, Math.round(affs.length/5*100)),   // cible : 5 affirmations
+      structure: this._scoreStructure(text),                         // présence de marqueurs
+    };
+    const global=Math.round((scores.longueur*.25+scores.definitions*.35+scores.concepts*.25+scores.affirmations*.1+scores.structure*.05));
+
+    // Capacité réelle : combien de questions peut-on faire de qualité
+    const qCapa=Math.min(
+      defs.length*2 + Math.floor(concepts.length/2) + Math.floor(affs.length/2) + dates.length,
+      20
+    );
+
+    // Warnings spécifiques et honnêtes
+    const warnings=[];
+    const suggestions=[];
+
+    if(wordCount<80){
+      warnings.push({level:'error',msg:'Texte trop court ('+wordCount+' mots). L\'IA ne peut pas générer des questions pertinentes.'});
+      suggestions.push('Ajoute au moins 150 mots de cours sur ce sujet.');
+    } else if(wordCount<150){
+      warnings.push({level:'warn',msg:'Texte court ('+wordCount+' mots). Les questions seront limitées en qualité.'});
+      suggestions.push('Enrichis le cours — vise 200+ mots pour de bonnes questions.');
+    }
+
+    if(defs.length===0){
+      warnings.push({level:'error',msg:'Aucune définition trouvée. L\'IA ne sait pas ce que signifient les termes clés.'});
+      suggestions.push('Ajoute des définitions avec le format "X est..." ou "X : ..." dans ton cours.');
+    } else if(defs.length<3){
+      warnings.push({level:'warn',msg:`Seulement ${defs.length} définition(s) trouvée(s). Les QCM manqueront de précision.`});
+      suggestions.push('Ajoute plus de définitions explicites dans le texte du cours.');
+    }
+
+    if(concepts.length<5){
+      warnings.push({level:'warn',msg:'Peu de concepts distincts détectés. Les questions pourraient être répétitives.'});
+      suggestions.push('Développe chaque notion avec des exemples et des explications.');
+    }
+
+    if(qCapa<numQ){
+      warnings.push({level:'warn',msg:`L'IA peut générer environ ${qCapa} question(s) de qualité, tu en demandes ${numQ}.`});
+      suggestions.push(`Réduis à ${Math.max(qCapa,3)} questions, ou enrichis le cours.`);
+    }
+
+    if(subject==='📚 Cours'){
+      warnings.push({level:'info',msg:'Matière non identifiée. L\'IA adapte ses questions en mode générique.'});
+      suggestions.push('Commence le texte en nommant la matière ("En histoire...", "En physique...") pour des questions mieux ciblées.');
+    }
+
+    const level=global>=75?'good':global>=45?'medium':'low';
+    return{score:global,level,warnings,suggestions,subject,metrics:{wordCount,defs:defs.length,concepts:concepts.length,affs:affs.length,qCapa,scores}};
+  }
+
+  static _scoreStructure(text){
+    const markers=['par exemple','ainsi','donc','en effet','cependant','or','de plus','premièrement','deuxièmement','enfin','conclusion','résumé','définition','propriété','théorème','loi de','principe'];
+    const found=markers.filter(m=>text.toLowerCase().includes(m)).length;
+    return Math.min(100,found*15);
+  }
+}
+
+// ════════════════════════════════════════════════════
+// SUIVI DE MAÎTRISE PAR SUJET
+// ════════════════════════════════════════════════════
+let SubjectMastery=DB.get('mastery')||{};
+function updateMastery(subject,pct){
+  if(!SubjectMastery[subject])SubjectMastery[subject]={quizzes:[],avgPct:0};
+  SubjectMastery[subject].quizzes.push({pct,date:new Date().toISOString()});
+  const all=SubjectMastery[subject].quizzes.slice(-10);
+  SubjectMastery[subject].avgPct=Math.round(all.reduce((a,b)=>a+b.pct,0)/all.length);
+  DB.set('mastery',SubjectMastery);
+}
+function getMasteryForSubject(subject){return SubjectMastery[subject]||null;}
+
+// ════════════════════════════════════════════════════
+// BASE D'ENTRAÎNEMENT
+// ════════════════════════════════════════════════════
+
+
+function generateAdvice(score,wrongQs,subject,conf){
+  const{pct}=score;
+  const note=pctTo20(pct);
+  const wrongTopics=wrongQs.slice(0,4).map(q=>NLP.extractConcepts(q.question,2)[0]).filter(Boolean);
+
+  let advice='';
+  if(note>=18)advice=`🏆 Excellent sur ${subject} !\n\nTu maîtrises parfaitement ce cours (${fmt20(pct)}/20). Pour aller plus loin :\n• Explique ces notions à quelqu'un d'autre\n• Crée tes propres exemples et contre-exemples\n• Relie ces concepts à d'autres chapitres`;
+  else if(note>=14)advice=`🎯 Très bon travail sur ${subject} ! (${fmt20(pct)}/20)\n\nQuelques points à consolider :\n${wrongTopics.map(t=>`• Révise la notion de "${t}"`).join('\n')||'• Relis les parties que tu as ratées'}\n\nFais une fiche résumé sur ces points.`;
+  else if(note>=10)advice=`📚 Bonne base sur ${subject} (${fmt20(pct)}/20).\n\nPlan de révision :\n1. Relis lentement le cours en soulignant les points clés\n2. Fais des fiches sur :\n${wrongTopics.map(t=>`   • ${t}`).join('\n')||'   • Les définitions importantes'}\n3. Refais ce quiz dans 2 jours`;
+  else advice=`💪 Continue, tu vas y arriver ! (${fmt20(pct)}/20)\n\nPlan pour ${subject} :\n1. Relis le cours entier sans prendre de notes\n2. Identifie les 5 concepts les plus importants\n3. Fiche par concept : définition + exemple\n4. Reviens faire ce quiz demain`;
+
+  if(conf&&conf.score<70){
+    advice+=`\n\n──────────────────\n🤖 Note de l'IA sur sa propre performance :\nMa confiance sur ce cours était de ${conf.score}% — `;
+    if(conf.score<40)advice+=`assez faible. Certaines questions étaient probablement imprécises.`;
+    else advice+=`correcte mais améliorable.`;
+    if(conf.suggestions.length>0)advice+='\n'+conf.suggestions.map(s=>`• ${s}`).join('\n');
+  }
+
+  const mastery=getMasteryForSubject(subject);
+  if(mastery&&mastery.quizzes.length>=2){
+    const prev=mastery.quizzes[mastery.quizzes.length-2].pct;
+    const diff=pct-prev;
+    const diffNote=Math.round(diff/100*20*10)/10;
+    if(diff>0)advice+=`\n\n📈 Progression : +${diffNote} point(s)/20 par rapport à ton dernier quiz sur ce sujet !`;
+    else if(diff<-5)advice+=`\n\n📉 Recul de ${Math.abs(diffNote)} point(s)/20 par rapport au dernier quiz. Relis le cours avant de réessayer.`;
+    else advice+=`\n\n➡️ Score stable par rapport au dernier quiz sur ce sujet.`;
+  }
+
+  return advice;
+}
+
+// ════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════
+const S={
+  page:'home',mode:'text',
+  courseText:'',imageData:null,
+  quizType:'mixte',numQ:8,
+  quiz:null,corrections:[],currentQ:0,currentAns:'',correcting:false,
+  score:null,advice:'',
+  history:DB.get('history')||[],
+  toast:null,showModal:null,forceGen:false,confidenceReport:null,
+  // Timer
+  timerEnabled:false,timerLeft:0,timerTotal:600,
+  // SR
+  srMode:false,
+  // Exercise
+  exoText:'',exoMode:'text',exoImageData:null,exoResult:null,
+  // Install tab
+  installTab:'phone',
+};
+
+// ════════════════════════════════════════════════════
+function renderModal(){
+  const mr=document.getElementById('modal-root');
+  if(!mr)return;
+  let inner='';
+  try{
+    if(S.showModal==='account')inner=renderAccountModal();
+    else if(S.showModal==='legal_consent')inner=renderLegalConsent();
+    else if(S.showModal==='legal')inner=renderLegalFull();
+    else if(S.showModal==='install')inner=renderInstallModal();
+    else if(S.showModal==='import')inner=renderImportModal();
+    else{mr.innerHTML='';return;}
+  }catch(e){console.error('Modal error:',e);mr.innerHTML='';S.showModal=null;return;}
+  mr.innerHTML=`
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal" style="position:relative">
+        <div class="modal-close" onclick="closeModal()">✕</div>
+        ${inner}
+      </div>
+    </div>`;
+}
+
+// RENDER
+// ════════════════════════════════════════════════════
+function render(){
+  try{
+    document.getElementById('app').innerHTML=renderHdr()+renderPage()+renderLegalFooter()+renderNav()+(S.toast?`<div class="toast">${S.toast}</div>`:'');
+  }catch(e){
+    console.error('Render error:',e);
+    document.getElementById('app').innerHTML='<div style="padding:40px;text-align:center;color:#e84444">Erreur de rendu. <button onclick="location.reload()">Recharger</button></div>';
+  }
+  if(S.showModal)renderModal();
+  else{const mr=document.getElementById('modal-root');if(mr)mr.innerHTML='';}
+  bindEv();
+}
+
+function renderHdr(){
+  const user=window._getUserInfo?.();
+  const themeIcon=Settings.theme==='light'?'🌙':'☀️';
+  return`<div class="hdr">
+    <div class="logo">🧠</div>
+    <div class="logo-t"><h1>RéviseIA</h1><span>${user?'☁️ '+user.name.split(' ')[0]:'hors-ligne'}</span></div>
+    <div class="hdr-right">
+      <div class="ic-btn" onclick="saveSetting('theme',Settings.theme==='dark'?'light':'dark')" title="Thème" style="font-size:18px">${themeIcon}</div>
+      <div onclick="S.showModal='account';render()" style="cursor:pointer;width:36px;height:36px;border-radius:50%;overflow:hidden;border:2px solid var(--bdr);flex-shrink:0;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:18px">
+        ${user?`<img src="${user.photo}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='⚙️'">`:'⚙️'}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderNav(){
+  const pages=[
+    {id:'home',i:'🏠',l:'Accueil'},
+    {id:'create',i:'✨',l:'Quiz'},
+    {id:'exo',i:'📐',l:'Exercice'},
+    {id:'progress',i:'📊',l:'Progrès'},
+    {id:'history',i:'📋',l:'Historique'},
+  ];
+  const active=['quiz','results','sr','fiche','confidence_warning'].includes(S.page)?'create':S.page;
+  return`<nav class="nav">${pages.map(p=>`<button class="nv ${active===p.id?'on':''}" onclick="nav('${p.id}')"><span class="ni">${p.i}</span>${p.l}</button>`).join('')}</nav>`;
+}
+
+function renderPage(){
+  switch(S.page){
+    case'home':return renderHome();
+    case'setup':return renderSetup();
+    case'login':return renderLogin();
+    case'create':return renderCreate();
+    case'quiz':return renderQuiz();
+    case'results':return renderResults();
+    case'confidence_warning':return renderConfidenceWarning();
+    case'exo':return renderExo();
+    case'history':return renderHistory();
+    case'progress':return renderProgress();
+    case'sr':return renderSR();
+    case'fiche':return renderFiche();
+    default:return renderHome();
+  }
+}
+
+// ─── HOME ───
+function renderHome(){
+  const h=S.history;
+  const avg=h.length?Math.round(h.reduce((a,b)=>a+b.pct,0)/h.length):0;
+  const best=h.length?Math.max(...h.map(x=>x.pct)):0;
+  const isLogged=window._isLoggedIn?.();
+  const due=srDueToday();
+  const streakEmoji=StreakData.current>=7?'🔥':StreakData.current>=3?'⚡':StreakData.current>=1?'✨':'💤';
+  return`
+  ${!isLogged?`<div style="background:rgba(79,142,247,.08);border:1px solid rgba(79,142,247,.2);border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="connecterGoogle()">
+    <span style="font-size:22px">🔑</span>
+    <div style="flex:1"><div style="font-size:13px;font-weight:600">Se connecter avec Google</div><div style="font-size:11px;color:var(--txt2)">Synchronise tes révisions sur tous tes appareils</div></div>
+    <span style="font-size:18px;color:var(--c1)">→</span>
+  </div>`:''}
+
+  <div style="display:flex;gap:10px;margin-bottom:14px">
+    <div class="streak-bar" style="flex:1;margin-bottom:0">
+      <div class="streak-fire">${streakEmoji}</div>
+      <div class="streak-info">
+        <div class="streak-num">${StreakData.current} jour${StreakData.current>1?'s':''}</div>
+        <div class="streak-lbl">Meilleur : ${StreakData.best}j</div>
+      </div>
+    </div>
+    ${due>0?`<div class="streak-bar" style="flex:1;margin-bottom:0;cursor:pointer;border-color:rgba(232,68,68,.3)" onclick="nav('sr')">
+      <div class="streak-fire">🔁</div>
+      <div class="streak-info">
+        <div class="streak-num" style="color:var(--c5)">${due}</div>
+        <div class="streak-lbl">à réviser aujourd'hui</div>
+      </div>
+    </div>`:''}
+  </div>
+
+  <div class="hero">
+    <h2>Tes révisions, <em>plus intelligentes</em></h2>
+    <p>Colle ton cours, l'IA génère un quiz ou résout tes exercices.</p>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:20px">
+      <button class="btn btn-p" onclick="nav('create')">✨ Créer un quiz</button>
+      <button class="btn btn-s" onclick="nav('exo')">📐 Résoudre un exercice</button>
+    </div>
+    <div class="act-grid">
+      <div class="act-card" onclick="nav('create')"><div class="ai">📝</div><h3>Quiz depuis texte</h3><p>Colle ou écris ton cours</p></div>
+      <div class="act-card" onclick="setMode('image');nav('create')"><div class="ai">📷</div><h3>Quiz depuis photo</h3><p>Photo de ta fiche ou manuel</p></div>
+      <div class="act-card" onclick="nav('exo')"><div class="ai">📐</div><h3>Résoudre un exercice</h3><p>L'IA analyse étape par étape</p></div>
+
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="n">${h.length}</div><div class="l">Quiz faits</div></div>
+    <div class="stat"><div class="n">${h.length?fmt20(avg):'-'}<span style="font-size:13px">/20</span></div><div class="l">Moyenne</div></div>
+    <div class="stat"><div class="n">${h.length?fmt20(best):'-'}<span style="font-size:13px">/20</span></div><div class="l">Meilleur</div></div>
+    <div class="stat"><div class="n">${EarnedBadges.length}</div><div class="l">Badges</div></div>
+  </div>
+
+  ${EarnedBadges.length>0?`
+  <div class="sl">Mes badges</div>
+  <div class="badges-grid">
+    ${BADGES_DEF.map(b=>`<div class="badge-item ${EarnedBadges.includes(b.id)?'unlocked':'locked'}" title="${b.desc}">
+      <div class="badge-ico">${b.ico}</div>
+      <div class="badge-name">${b.name}</div>
+    </div>`).join('')}
+  </div>`:''}
+
+  ${h.length>0?`<div class="sl">Dernières révisions</div>${h.slice(-3).reverse().map(it=>`
+  <div class="hi-item" onclick="loadHistory(${it.id})">
+    <div class="hibadge" style="background:${scCol(it.pct,.15)}">${scEm(it.pct)}</div>
+    <div class="hiinfo"><div class="hit">${it.subject}</div><div class="him">${it.date} · ${it.total} questions</div></div>
+    <div class="hiscore" style="color:${scCol(it.pct,1)}">${fmt20(it.pct)}<span style="font-size:12px;opacity:.7">/20</span></div>
+  </div>`).join('')}`:''}`;
+}
+
+// ─── CONFIDENCE WARNING ───
+function renderConfidenceWarning(){
+  const r=S.confidenceReport;
+  if(!r)return'';
+  const scoreColor=r.score>=75?'var(--c3)':r.score>=45?'var(--c4)':'var(--c5)';
+  const scoreLabel=r.score>=75?'Bonne':r.score>=45?'Moyenne':'Faible';
+  const errors=r.warnings.filter(w=>w.level==='error');
+  const warns=r.warnings.filter(w=>w.level==='warn');
+  const infos=r.warnings.filter(w=>w.level==='info');
+  return`
+  <div class="sl">Auto-diagnostic</div>
+  <h2 style="font-family:'Syne',sans-serif;font-weight:700;font-size:20px;margin-bottom:6px">L'IA a analysé ton cours</h2>
+  <p style="font-size:13px;color:var(--txt2);margin-bottom:18px">Avant de générer, voici honnêtement ce que je peux et ne peux pas faire avec ce texte.</p>
+
+  <div class="card" style="text-align:center;padding:24px">
+    <div style="font-size:13px;color:var(--txt2);margin-bottom:6px">Score de confiance global</div>
+    <div style="font-size:52px;font-weight:800;font-family:'Syne',sans-serif;color:${scoreColor};line-height:1">${r.score}%</div>
+    <div style="font-size:14px;font-weight:600;color:${scoreColor};margin-top:4px">${scoreLabel}</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px">
+      ${[
+        ['📝',r.metrics.wordCount,'mots'],
+        ['🔍',r.metrics.defs,'définitions'],
+        ['💡',r.metrics.concepts,'concepts'],
+      ].map(([e,n,l])=>`<div style="background:var(--s2);border:1px solid var(--bdr);border-radius:10px;padding:10px">
+        <div style="font-size:18px">${e}</div>
+        <div style="font-size:18px;font-weight:700;color:var(--txt)">${n}</div>
+        <div style="font-size:11px;color:var(--txt3)">${l}</div>
+      </div>`).join('')}
+    </div>
+    <div style="font-size:12px;color:var(--txt2);margin-top:12px">Je peux générer ~${r.metrics.qCapa} question(s) de qualité avec ce texte.</div>
+  </div>
+
+  ${errors.length?`<div style="background:rgba(240,79,79,.07);border:1px solid rgba(240,79,79,.25);border-radius:14px;padding:16px;margin-bottom:12px">
+    <div style="font-size:13px;font-weight:700;color:var(--c5);margin-bottom:10px">🚨 Problèmes bloquants</div>
+    ${errors.map(w=>`<div style="font-size:13px;color:var(--txt2);margin-bottom:6px;padding-left:12px;border-left:2px solid var(--c5)">⚠️ ${w.msg}</div>`).join('')}
+  </div>`:''}
+
+  ${warns.length?`<div style="background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.25);border-radius:14px;padding:16px;margin-bottom:12px">
+    <div style="font-size:13px;font-weight:700;color:var(--c4);margin-bottom:10px">⚠️ Points d'attention</div>
+    ${warns.map(w=>`<div style="font-size:13px;color:var(--txt2);margin-bottom:6px;padding-left:12px;border-left:2px solid var(--c4)">${w.msg}</div>`).join('')}
+  </div>`:''}
+
+  ${infos.length?`<div style="background:rgba(79,142,247,.07);border:1px solid rgba(79,142,247,.2);border-radius:14px;padding:16px;margin-bottom:12px">
+    <div style="font-size:13px;font-weight:700;color:var(--c1);margin-bottom:10px">💡 Pour améliorer mes questions</div>
+    ${infos.map(w=>`<div style="font-size:13px;color:var(--txt2);margin-bottom:6px;padding-left:12px;border-left:2px solid var(--c1)">${w.msg}</div>`).join('')}
+  </div>`:''}
+
+  ${r.suggestions.length?`<div class="card" style="background:var(--s2)">
+    <div style="font-size:13px;font-weight:700;margin-bottom:10px">✏️ Ce que tu peux faire pour m'aider</div>
+    ${r.suggestions.map((s,i)=>`<div style="display:flex;gap:10px;margin-bottom:8px">
+      <span style="width:20px;height:20px;border-radius:50%;background:var(--c1);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${i+1}</span>
+      <span style="font-size:13px;color:var(--txt2)">${s}</span>
+    </div>`).join('')}
+  </div>`:''}
+
+  <div style="display:flex;gap:10px;margin-top:4px">
+    <button class="btn btn-s" style="flex:1;justify-content:center" onclick="nav('create')">← Améliorer le cours</button>
+  </div>
+  <button class="btn btn-s btn-full" style="margin-top:8px;opacity:.6;font-size:13px" onclick="S.forceGen=true;genQuiz()">
+    Générer quand même (${r.score}% de confiance)
+  </button>`;
+}
+
+// ─── CREATE ───
+function renderCreate(){
+  return`
+  <div class="sl">Nouveau quiz</div>
+  <h2 style="font-family:'Syne',sans-serif;font-weight:700;font-size:21px;margin-bottom:16px">Ajoute ton cours</h2>
+  <div class="card">
+    <div class="pill-row" style="margin-bottom:14px">
+      <button class="pill pblue ${S.mode==='text'?'on':''}" onclick="setMode('text')">📝 Texte</button>
+      <button class="pill ppurple ${S.mode==='image'?'on':''}" onclick="setMode('image')">📷 Photo</button>
+    </div>
+    ${S.mode==='text'?`
+      <textarea id="ct" rows="9" placeholder="Colle ou écris ton cours ici…&#10;&#10;Conseil : plus le cours est long et détaillé, plus les questions seront pertinentes !" oninput="updateCourseText(this.value)" onpaste="setTimeout(()=>updateCourseText(document.getElementById('ct').value),10)" onchange="updateCourseText(this.value)">${S.courseText}</textarea>
+      <div id="ct-counter" style="display:flex;justify-content:space-between;margin-top:7px;align-items:center">
+        <span style="color:var(--txt3)">0 car. · 0 concepts · 0 définitions</span>
+        <span style="color:var(--txt3)">Min. 50 car.</span>
+      </div>`:`
+      <div class="upzone" id="dz" onclick="document.getElementById('fi').click()">
+        <div style="font-size:32px;margin-bottom:10px">${S.imageData?'✅':'📷'}</div>
+        <p>${S.imageData?'Image chargée. Clique pour changer.':'<strong>Clique</strong> ou glisse une photo de ton cours'}</p>
+        ${!S.imageData?'<p style="font-size:11px;color:var(--txt3);margin-top:5px">JPG, PNG · max 10 Mo</p>':''}
+      </div>
+      <input type="file" id="fi" accept="image/*" onchange="handleFile(this,'img')">
+      ${S.imageData?`<img src="${S.imageData}" class="prev-img">`:''}
+      ${S.imageData?'<p style="font-size:12px;color:var(--c3);margin-top:8px">✅ L\'IA va analyser l\'image et détecter les notions importantes.</p>':''}`}
+  </div>
+  <div class="card">
+    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;margin-bottom:14px">⚙️ Options</div>
+    <label class="lbl">Type de questions</label>
+    <div class="pill-row" style="margin-bottom:14px">
+      ${[['mixte','🎲 Mixte'],['qcm','🔘 QCM'],['ouverte','✍️ Ouvertes'],['vtf','⚖️ Vrai/Faux']].map(([v,l])=>`
+        <button class="pill pblue ${S.quizType===v?'on':''}" onclick="S.quizType='${v}';render()">${l}</button>`).join('')}
+    </div>
+    <label class="lbl">Nombre de questions</label>
+    <select onchange="S.numQ=+this.value">${[5,8,10,15].map(n=>`<option value="${n}" ${S.numQ===n?'selected':''}>${n} questions</option>`).join('')}</select>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--bdr)">
+      <span style="font-size:13px;color:var(--txt2)">⏱ Mode chrono</span>
+      <label style="margin-left:auto;display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" ${S.timerEnabled?'checked':''} onchange="S.timerEnabled=this.checked;render()" style="width:16px;height:16px;accent-color:var(--c1)">
+        <span style="font-size:13px">${S.timerEnabled?'Activé':'Désactivé'}</span>
+      </label>
+    </div>
+    ${S.timerEnabled?`<select onchange="S.timerTotal=+this.value" style="margin-top:10px">
+      ${[[300,'5 min'],[600,'10 min'],[900,'15 min'],[1200,'20 min']].map(([v,l])=>`<option value="${v}" ${S.timerTotal===v?'selected':''}>${l}</option>`).join('')}
+    </select>`:''}
+  </div>
+  <button id="gen-btn" class="btn btn-p btn-full" onclick="genQuiz()" ${canGen()?'':'disabled'}>✨ Générer le quiz</button>
+  <p id="gen-hint" style="text-align:center;font-size:11px;color:var(--txt3);margin-top:6px;display:${canGen()?'none':'block'}">Ajoute du contenu pour continuer</p>`;}
+
+// ─── QUIZ ───
+function renderQuiz(){
+  if(!S.quiz)return'';
+  const q=S.quiz.questions[S.currentQ];
+  const total=S.quiz.questions.length;
+  const pct=(S.currentQ/total)*100;
+  const corr=S.corrections[S.currentQ];
+  return`
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <button class="btn btn-s btn-sm" onclick="if(confirm('Quitter ce quiz ?')){stopTimer();S.quiz=null;S.score=null;nav('home')}">← Quitter</button>
+    <div class="qprog" style="flex:1"><div class="qprog-f" style="width:${pct}%"></div></div>
+    <span style="font-size:12px;color:var(--txt3)">${S.currentQ+1}/${total}</span>
+    ${S.timerEnabled?`<span id="timer-disp" class="timer-display">${Math.floor(S.timerLeft/60)}:${String(S.timerLeft%60).padStart(2,'0')}</span>`:''}
+  </div>
+  ${q.fromTraining?'<div style="font-size:11px;color:var(--c3);margin-bottom:8px">⭐ Question issue de ton entraînement</div>':''}
+  <div class="card">
+    <div class="qnum">Question ${S.currentQ+1} · ${tLbl(q.type)}</div>
+    ${(()=>{const key=q.question;const img=_imgCache[key]||_imgCache[(q.question||'').toLowerCase().replace(/[^a-zéèêëàâîïùûüôœç\s]/g,'').split(/\s+/).filter(w=>w.length>4).slice(0,2).join(' ')]||null;return img?`<img src="${img}" alt="" style="width:100%;max-height:180px;object-fit:cover;border-radius:10px;margin-bottom:14px;opacity:.9">`:'';})()}
+    <div class="qtxt">${q.question}</div>
+    ${q.type==='qcm'?renderQCM(q,corr):''}
+    ${q.type==='vtf'?renderVTF(q,corr):''}
+    ${q.type==='ouverte'?renderOpen(q,corr):''}
+    ${corr?renderFB(corr):''}
+  </div>
+  ${corr?`<div style="display:flex;gap:8px;margin-top:8px">
+    ${S.currentQ<total-1
+      ?`<button class="btn btn-p" style="flex:1;justify-content:center" onclick="nextQ()">Suivante →</button>`
+      :`<button class="btn btn-p" style="flex:1;justify-content:center" onclick="showResults()">🎉 Voir mes résultats</button>`}
+  </div>`:
+  q.type==='ouverte'?`<button class="btn btn-p btn-full" onclick="submitOpen()" ${S.correcting?'disabled':''}>${S.correcting?'⏳ Correction…':'Valider ma réponse →'}</button>`:''}`;
+}
+
+function renderQCM(q,corr){
+  return`<div class="choices">
+    ${q.choices.map((c,i)=>{
+      let cl='';
+      if(corr){if(i===q.correctIndex)cl='ok';else if(i===corr.si&&i!==q.correctIndex)cl='ko';}
+      else if(S.currentAns===String(i))cl='sel';
+      return`<button class="ch ${cl}" onclick="selQCM(${i})" ${corr?'disabled':''}>
+        <span class="chl">${'ABCD'[i]}</span><span>${c}</span>
+      </button>`;
+    }).join('')}
+  </div>
+  ${!corr&&S.currentAns!==''?`<button class="btn btn-p btn-full" style="margin-top:12px" onclick="subQCM()" ${S.correcting?'disabled':''}>${S.correcting?'⏳…':'Valider →'}</button>`:''}`;
+}
+
+function renderVTF(q,corr){
+  return`<div class="tf-row">
+    ${['Vrai','Faux'].map((v,i)=>{
+      let cl='';
+      if(corr){if(v===q.answer)cl='ok';else if(v===corr.sv&&v!==q.answer)cl='ko';}
+      else if(S.currentAns===v)cl='sel';
+      return`<button class="tfb ${cl}" onclick="selVTF('${v}')" ${corr?'disabled':''}>${i===0?'✅':'❌'} ${v}</button>`;
+    }).join('')}
+  </div>
+  ${!corr&&S.currentAns?`<button class="btn btn-p btn-full" style="margin-top:12px" onclick="subVTF()" ${S.correcting?'disabled':''}>${S.correcting?'⏳…':'Valider →'}</button>`:''}`;
+}
+
+function renderOpen(q,corr){
+  if(corr)return`<div class="card" style="background:var(--s2);border-style:dashed"><p style="font-size:12px;color:var(--txt3);margin-bottom:5px">Ta réponse :</p><p style="font-size:13px">${corr.answer||''}</p></div>`;
+  return`<textarea class="oa" id="oa" rows="4" placeholder="Écris ta réponse ici…" oninput="S.currentAns=this.value">${S.currentAns}</textarea>`;
+}
+
+function renderFB(corr){
+  const ok=corr.correct;
+  return`<div class="fb ${ok?'okf':'kof'}">
+    <strong style="color:${ok?'var(--c3)':'var(--c5)'}">${ok?'✅ Correct !':'❌ Incorrect'}</strong>
+    <div style="margin-top:5px;white-space:pre-wrap">${corr.explanation}</div>
+  </div>`;
+}
+
+// ─── RESULTS ───
+function renderResults(){
+  if(!S.score)return'';
+  const{correct,total,pct}=S.score;
+  const r=130;const cx=r/2;const cy=r/2;const radius=50;
+  const circ=2*Math.PI*radius;
+  const dash=(pct/100)*circ;
+  return`
+  <div class="score-wrap">
+    <div class="score-circle">
+      <svg viewBox="0 0 ${r} ${r}" fill="none">
+        <circle cx="${cx}" cy="${cy}" r="${radius}" stroke="var(--bdr)" stroke-width="8"/>
+        <circle cx="${cx}" cy="${cy}" r="${radius}" stroke="url(#sg)" stroke-width="8" stroke-dasharray="${dash} ${circ}" stroke-linecap="round"/>
+        <defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="var(--c1)"/><stop offset="100%" stop-color="var(--c2)"/></linearGradient></defs>
+      </svg>
+      <div class="score-num"><div class="sn">${fmt20(pct)}<span style="font-size:18px;font-weight:400">/20</span></div><div class="sd">${correct} sur ${total} bonnes</div></div>
+    </div>
+    <h3 style="font-family:'Syne',sans-serif;font-weight:700;font-size:22px;margin-bottom:5px">${getMention(pct)}</h3>
+    <p style="color:var(--txt2);font-size:13px">${getMentionSub(pct)}</p>
+  </div>
+  <div class="advice-box"><h4>💡 Conseils personnalisés</h4><p>${S.advice}</p></div>
+  <div class="card">
+    <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:14px">📋 Correction détaillée</div>
+    ${S.quiz.questions.map((q,i)=>{const c=S.corrections[i];if(!c)return'';return`
+    <div class="rev-item">
+      <div class="rev-q">${i+1}. ${q.question}</div>
+      <div class="rev-st ${c.correct?'ok':'ko'}">${c.correct?'✅ Correct':'❌ Incorrect'}</div>
+      <div class="rev-e">${c.explanation}</div>
+    </div>`;}).join('')}
+  </div>
+  <div style="display:flex;gap:10px;margin-top:8px">
+    <button class="btn btn-s" style="flex:1;justify-content:center" onclick="nav('home')">🏠 Accueil</button>
+    <button class="btn btn-p" style="flex:1;justify-content:center" onclick="nav('create')">✨ Nouveau quiz</button>
+  </div>
+  <div style="display:flex;gap:10px;margin-top:8px">
+    <button class="btn btn-s" style="flex:1;justify-content:center;font-size:13px" onclick="S.ficheText=S.courseText||'';nav('fiche')">📄 Générer fiche</button>
+    ${srDueToday()>0?`<button class="btn btn-s" style="flex:1;justify-content:center;font-size:13px" onclick="nav('sr')">🔁 ${srDueToday()} à réviser</button>`:''}
+  </div>`;
+}
+
+// ─── EXERCICE ───
+function renderExo(){
+  return`
+  <div class="sl">Nouveau</div>
+  <h2 style="font-family:'Syne',sans-serif;font-weight:700;font-size:21px;margin-bottom:6px">Résoudre un exercice</h2>
+  <p style="font-size:13px;color:var(--txt2);margin-bottom:16px">Colle ou écris ton exercice — l'IA l'analyse et le résout étape par étape.</p>
+  ${!S.exoResult?renderExoInput():renderExoResult()}`;
+}
+
+function renderExoInput(){
+  return`
+  <div class="card">
+    <div class="pill-row" style="margin-bottom:14px">
+      <button class="pill pblue ${S.exoMode==='text'?'on':''}" onclick="S.exoMode='text';render()">📝 Texte</button>
+      <button class="pill ppurple ${S.exoMode==='image'?'on':''}" onclick="S.exoMode='image';render()">📷 Photo</button>
+    </div>
+    ${S.exoMode==='text'?`
+      <textarea id="exo-t" rows="8" placeholder="Colle ton exercice ici…&#10;&#10;Exemples :&#10;• Calcule 35% de 240&#10;• Résous l'équation 2x + 5 = 13&#10;• Explique la photosynthèse&#10;• Calcule la vitesse si d=150km en 2h&#10;• Identifie les figures de style dans ce texte : …" oninput="S.exoText=this.value;updateExoBtn()" onpaste="setTimeout(()=>{S.exoText=this.value;updateExoBtn();},10)">${S.exoText}</textarea>`:`
+      <div class="upzone" id="dz2" onclick="document.getElementById('fi2').click()">
+        <div style="font-size:32px;margin-bottom:10px">${S.exoImageData?'✅':'📷'}</div>
+        <p>${S.exoImageData?'Image chargée. Clique pour changer.':'<strong>Clique</strong> ou glisse la photo de l\'exercice'}</p>
+      </div>
+      <input type="file" id="fi2" accept="image/*" onchange="handleFile(this,'exo')">
+      ${S.exoImageData?`<img src="${S.exoImageData}" class="prev-img">`:''}
+      ${S.exoImageData?`<div style="margin-top:10px">
+        <label class="lbl">Texte de l'exercice (si l'image est peu lisible)</label>
+        <textarea id="exo-t" rows="3" placeholder="Texte de l'exercice (optionnel)…" oninput="S.exoText=this.value">${S.exoText}</textarea>
+      </div>`:''}`}
+  </div>
+  <button class="btn btn-a btn-full" onclick="solveExo()" ${(S.exoText.trim().length>10||(S.exoMode==='image'&&S.exoImageData))?'':'disabled'}>
+    📐 Résoudre l'exercice
+  </button>
+  <p style="text-align:center;font-size:11px;color:var(--txt3);margin-top:7px">Fonctionne pour : Maths, Physique, SVT, Histoire, Français et plus</p>`;
+}
+
+function renderExoResult(){
+  const r=S.exoResult;
+  const diffClass={'easy':'diff-easy','med':'diff-med','hard':'diff-hard'}[r.difficulty]||'diff-easy';
+  const diffLabel={'easy':'Facile','med':'Intermédiaire','hard':'Avancé'}[r.difficulty]||'';
+  return`
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px">
+    <span class="subj-badge" style="background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.2);color:var(--c1)">${r.subject}</span>
+    <span class="diff-badge ${diffClass}">${diffLabel}</span>
+    <button class="btn btn-s btn-sm" style="margin-left:auto" onclick="S.exoResult=null;render()">← Nouvel exercice</button>
+  </div>
+  <div class="exo-card">${S.exoText||'Exercice depuis image'}</div>
+  <div class="card">
+    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;margin-bottom:16px">📋 Résolution étape par étape</div>
+    <div class="step-list">
+      ${r.steps.map((step,i)=>`
+      <div class="step">
+        <div class="step-num">${i+1}</div>
+        <div class="step-body">
+          <div class="step-title">${step.title}</div>
+          <div class="step-content" style="white-space:pre-wrap">${step.content}</div>
+          ${step.formula?`<div class="formula-box">${step.formula}</div>`:''}
+          ${step.formulas?step.formulas.map(f=>`<div class="formula-box">${f}</div>`).join(''):''}
+        </div>
+      </div>`).join('')}
+    </div>
+    ${r.result?`<div class="result-box"><div style="font-size:12px;color:var(--txt2);margin-bottom:6px">Résultat</div><div class="res-val">${r.result} ${r.unit||''}</div></div>`:''}
+  </div>
+  ${r.relatedQuestions&&r.relatedQuestions.length?`
+  <div class="card">
+    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;margin-bottom:12px">❓ Questions pour aller plus loin</div>
+    ${r.relatedQuestions.map((q,i)=>`
+    <div style="padding:12px;background:var(--s2);border:1px solid var(--bdr);border-radius:10px;margin-bottom:8px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:5px">${i+1}. ${q.q}</div>
+      <details><summary style="font-size:12px;color:var(--c1);cursor:pointer">Voir la réponse</summary>
+        <div style="font-size:12px;color:var(--txt2);margin-top:7px;line-height:1.6">${q.a}</div>
+      </details>
+    </div>`).join('')}
+  </div>`:''}
+  <div style="display:flex;gap:8px;margin-top:8px">
+    <button class="btn btn-g" style="flex:1;justify-content:center" onclick="exoToQuiz()">✨ Créer un quiz depuis cet exercice</button>
+  </div>`;
+}
+
+// Admin = le propriétaire de l'app (remplace par ton email Google)
+function exportAll(){
+  const data={history:S.history,exportedAt:new Date().toISOString()};
+  dl(JSON.stringify(data,null,2),'reviseIA_sync.json','application/json');
+  toast('⬇️ Données exportées !');
+}
+
+function importAll(inp){
+  const f=inp.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(data.history){S.history=data.history;DB.set('history',S.history);}
+      toast('✅ Données importées !');S.showModal=null;render();
+    }catch{toast('❌ Fichier invalide.');}
+  };
+  r.readAsText(f);
+}
+
+function generateQR(){
+  const el=document.getElementById('qr-canvas');
+  if(!el||typeof QRCode==='undefined')return;
+  const data=JSON.stringify({history:S.history});
+  if(data.length>2000){
+    el.innerHTML='<p style="color:var(--txt2);font-size:13px">Données trop volumineuses pour un QR code.<br>Utilise l\'export JSON à la place.</p>';
+    return;
+  }
+  try{
+    new QRCode(el,{text:data,width:200,height:200,colorDark:'#dce9ff',colorLight:'#131929',correctLevel:QRCode.CorrectLevel.M});
+  }catch(e){el.innerHTML='<p style="color:var(--txt2);font-size:12px">Erreur QR code. Utilise l\'export JSON.</p>';}
+}
+
+function dl(content,name,type){
+  const blob=new Blob([content],{type});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);
+}
+
+// ─── SETUP FIREBASE ───
+function renderSetup(){
+  return`
+  <div style="max-width:520px;margin:0 auto;padding:20px 0">
+  <div style="text-align:center;margin-bottom:28px">
+    <div style="font-size:48px;margin-bottom:12px">🔥</div>
+    <h2 style="font-family:'Syne',sans-serif;font-weight:800;font-size:22px;margin-bottom:8px">Connecte Firebase</h2>
+    <p style="font-size:14px;color:var(--txt2);line-height:1.7">Firebase est <strong style="color:var(--txt)">gratuit</strong> et permet la connexion Google + synchronisation automatique entre tous tes appareils.</p>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:14px">Étape 1 — Créer ton projet Firebase</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      ${[
+        ['1','Va sur','console.firebase.google.com','et connecte-toi avec Google'],
+        ['2','Clique','+ Ajouter un projet','→ donne un nom → désactive Google Analytics → Créer'],
+        ['3','Dans le projet','clique sur ⚙️ → Paramètres du projet'],
+        ['4','Descends jusqu\'à','Tes applications','→ clique sur l\'icône Web </> → donne un nom → Enregistrer'],
+        ['5','Copie le bloc','firebaseConfig = {...}','qui apparaît'],
+      ].map(s=>`<div style="display:flex;gap:10px;align-items:flex-start">
+        <span style="width:22px;height:22px;border-radius:50%;background:var(--c1);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:2px">${s[0]}</span>
+        <span style="font-size:13px;color:var(--txt2);line-height:1.6">${s[1]} <strong style="color:var(--txt)">${s[2]||''}</strong>${s[3]?' '+s[3]:''}</span>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:14px">Étape 2 — Activer Google Auth</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      ${[
+        ['1','Dans la console Firebase','menu gauche → Authentication → Commencer'],
+        ['2','Onglet','Méthodes de connexion','→ Google → Activer → Enregistrer'],
+      ].map(s=>`<div style="display:flex;gap:10px;align-items:flex-start">
+        <span style="width:22px;height:22px;border-radius:50%;background:var(--c2);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:2px">${s[0]}</span>
+        <span style="font-size:13px;color:var(--txt2);line-height:1.6">${s[1]} <strong style="color:var(--txt)">${s[2]||''}</strong></span>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:14px">Étape 3 — Activer Firestore</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      ${[
+        ['1','Menu gauche','Firestore Database','→ Créer une base de données'],
+        ['2','Choisis','Mode production','→ région europe-west (ou la plus proche) → Activer'],
+        ['3','Onglet','Règles','→ remplace par le texte ci-dessous → Publier'],
+      ].map(s=>`<div style="display:flex;gap:10px;align-items:flex-start">
+        <span style="width:22px;height:22px;border-radius:50%;background:var(--c3);color:#060810;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:2px">${s[0]}</span>
+        <span style="font-size:13px;color:var(--txt2);line-height:1.6">${s[1]} <strong style="color:var(--txt)">${s[2]||''}</strong>${s[3]?' '+s[3]:''}</span>
+      </div>`).join('')}
+    </div>
+    <div style="background:var(--s2);border:1px solid var(--bdr);border-radius:10px;padding:12px;margin-top:12px;font-family:monospace;font-size:12px;color:var(--c3);line-height:1.7;white-space:pre">rules_version = '2';
+service cloud.firestore {
+  match /databases/{db}/documents {
+    match /users/{uid}/{document=**} {
+      allow read, write: if request.auth.uid == uid;
+    }
+  }
+}</div>
+  </div>
+
+  <div class="card" style="margin-bottom:18px">
+    <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:10px">Étape 4 — Colle ta config ici</div>
+    <textarea id="fb-cfg-input" rows="8" placeholder='Colle ici le bloc firebaseConfig, par exemple :&#10;&#10;const firebaseConfig = {&#10;  apiKey: "AIza...",&#10;  authDomain: "mon-projet.firebaseapp.com",&#10;  projectId: "mon-projet",&#10;  storageBucket: "mon-projet.appspot.com",&#10;  messagingSenderId: "123456789",&#10;  appId: "1:123:web:abc123"&#10;};'></textarea>
+    <button class="btn btn-p btn-full" style="margin-top:12px" onclick="window.initFirebaseFromForm()">🔥 Connecter Firebase</button>
+  </div>
+
+  <div style="text-align:center">
+    <button class="btn btn-s btn-sm" onclick="nav('home')">← Utiliser sans compte (local uniquement)</button>
+  </div>
+  </div>`;
+}
+
+// ─── LOGIN ───
+function renderLogin(){
+  const lv=getLevel();
+  const levels=[
+    ['primaire','🎒','Primaire (CM1-CM2)'],
+    ['college','🏫','Collège (6e - 3e)'],
+    ['lycee','📚','Lycée (2nde - Terminale)'],
+    ['superieur','🎓','Supérieur / Prépa / BTS'],
+  ];
+  const levelHTML=levels.map(([val,ico,label])=>{
+    const selected=lv===val;
+    return '<label style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--s2);border:1.5px solid '+(selected?'var(--c1)':'var(--bdr)')+';border-radius:10px;cursor:pointer;margin-bottom:8px">'
+      +'<input type="radio" name="level" value="'+val+'" '+(selected?'checked':'')+' onchange="saveSetting(\'level\',this.value);render()" style="accent-color:var(--c1);width:16px;height:16px">'
+      +'<span style="font-size:16px">'+ico+'</span>'
+      +'<span style="font-size:14px;font-weight:'+(selected?'600':'400')+'">'+label+'</span>'
+      +'</label>';
+  }).join('');
+  return`
+  <div style="text-align:center;padding:32px 20px 20px;max-width:420px;margin:0 auto">
+    <div style="font-size:48px;margin-bottom:12px">🧠</div>
+    <h2 style="font-family:'Syne',sans-serif;font-weight:800;font-size:22px;margin-bottom:6px">Bienvenue sur RéviseIA</h2>
+    <p style="font-size:13px;color:var(--txt2);margin-bottom:24px;line-height:1.6">Connecte-toi avec Google pour synchroniser tes révisions sur tous tes appareils.</p>
+    <div class="card" style="text-align:left;margin-bottom:20px;padding:16px">
+      <div style="font-size:12px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Ton niveau scolaire</div>
+      ${levelHTML}
+    </div>
+    <button class="btn btn-full" onclick="connecterGoogle()" style="background:#fff;color:#1a1a1a;border:1px solid #ddd;font-size:15px;justify-content:center;gap:12px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.15)">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/><path fill="#FBBC05" d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+      Continuer avec Google
+    </button>
+    <button class="btn btn-s btn-full" onclick="nav('home')" style="font-size:13px;opacity:.6">Continuer sans compte</button>
+    <button class="btn btn-s btn-sm" style="margin-top:16px;opacity:.4;font-size:11px" onclick="window._resetFBConfig?.();nav('setup')">⚙️ Reconfigurer Firebase</button>
+  </div>`;
+}
+
+
+function renderAccountModal(){
+  const user=window._getUserInfo?.();
+  const isDark=Settings.theme==='dark';
+  const fs=Settings.fontSize||'md';
+  const referralCode=getOrCreateReferralCode();
+
+  const row=(icon,label,content)=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--bdr)">
+      <span style="font-size:18px;width:24px;text-align:center">${icon}</span>
+      <span style="font-size:13px;flex:1">${label}</span>
+      ${content}
+    </div>`;
+
+  return`
+  <h2 style="margin-bottom:20px">Paramètres</h2>
+
+  ${user?`
+  <div style="display:flex;align-items:center;gap:13px;padding:14px;background:var(--s2);border:1px solid var(--bdr);border-radius:13px;margin-bottom:20px">
+    <img src="${user.photo}" style="width:44px;height:44px;border-radius:50%;border:2px solid var(--c1)" onerror="this.style.background='var(--bdr)';this.style.display='flex'">
+    <div style="flex:1;min-width:0">
+      <div style="font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${user.name}</div>
+      <div style="font-size:11px;color:var(--txt2);margin-top:2px">${user.email}</div>
+      <div style="font-size:11px;color:var(--c3);margin-top:3px">☁️ Synchronisé · ${S.history.length} quiz</div>
+    </div>
+  </div>`:`
+  <div style="display:flex;align-items:center;gap:12px;padding:13px;background:var(--s2);border:1px solid var(--bdr);border-radius:13px;margin-bottom:20px">
+    <span style="font-size:28px">👤</span>
+    <div style="flex:1"><div style="font-size:13px;font-weight:600">Non connecté</div><div style="font-size:11px;color:var(--txt2)">Données locales uniquement</div></div>
+    <button class="btn btn-p btn-sm" onclick="connecterGoogle();S.showModal=null">🔑 Connexion</button>
+  </div>`}
+
+  <div class="card" style="padding:4px 16px;margin-bottom:12px">
+    ${row('🎨','Apparence',`
+      <div style="display:flex;background:var(--s2);border:1px solid var(--bdr);border-radius:8px;overflow:hidden">
+        <button onclick="saveSetting('theme','dark')" style="padding:6px 14px;border:none;cursor:pointer;font-size:12px;font-weight:600;font-family:'Inter',sans-serif;background:${isDark?'var(--c1)':'transparent'};color:${isDark?'#fff':'var(--txt2)'};transition:all .15s">🌙 Sombre</button>
+        <button onclick="saveSetting('theme','light')" style="padding:6px 14px;border:none;cursor:pointer;font-size:12px;font-weight:600;font-family:'Inter',sans-serif;background:${!isDark?'var(--c1)':'transparent'};color:${!isDark?'#fff':'var(--txt2)'};transition:all .15s">☀️ Clair</button>
+      </div>`)}
+    ${row('🔤','Taille',`
+      <div style="display:flex;background:var(--s2);border:1px solid var(--bdr);border-radius:8px;overflow:hidden">
+        ${[['sm','A·'],['md','A'],['lg','A+']].map(([v,l])=>`<button onclick="saveSetting('fontSize','${v}')" style="padding:6px 12px;border:none;cursor:pointer;font-size:${v==='sm'?'11px':v==='md'?'13px':'15px'};font-weight:600;font-family:'Inter',sans-serif;background:${fs===v?'var(--c1)':'transparent'};color:${fs===v?'#fff':'var(--txt2)'};transition:all .15s">${l}</button>`).join('')}
+      </div>`)}
+    ${row('🎒','Niveau',`
+      <select onchange="saveSetting('level',this.value)" style="background:var(--s2);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-family:'Inter',sans-serif;font-size:12px;padding:6px 10px">
+        <option value="primaire" ${Settings.level==='primaire'?'selected':''}>Primaire</option>
+        <option value="college" ${(Settings.level==='college'||!Settings.level)?'selected':''}>Collège</option>
+        <option value="lycee" ${Settings.level==='lycee'?'selected':''}>Lycée</option>
+        <option value="superieur" ${Settings.level==='superieur'?'selected':''}>Supérieur</option>
+      </select>`)}
+    ${row('🔥','Streak',`<span style="font-family:'Syne',sans-serif;font-weight:700;color:var(--c4)">${StreakData.current}j · Record ${StreakData.best}j</span>`)}
+  </div>
+
+  <div class="card" style="padding:16px;margin-bottom:12px">
+    <div style="font-size:12px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">🔗 Ton code de parrainage</div>
+    <div style="font-size:12px;color:var(--txt2);margin-bottom:12px;line-height:1.55">Partage ce code à tes amis pour les inviter sur RéviseIA. Aucun avantage, juste la fierté de faire grandir la communauté 🙂</div>
+    <div style="display:flex;align-items:center;gap:10px;background:var(--s1);border:1px solid var(--bdr2);border-radius:10px;padding:12px 16px">
+      <div style="flex:1">
+        <div style="font-size:10px;color:var(--txt3);margin-bottom:3px;letter-spacing:1px">TON CODE</div>
+        <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;letter-spacing:5px;color:var(--c1)">${referralCode}</div>
+      </div>
+      <button class="btn btn-s btn-sm" onclick="navigator.clipboard?.writeText('${referralCode}').then(()=>toast('✅ Code copié !')).catch(()=>toast('${referralCode}'))">Copier</button>
+    </div>
+    <div style="margin-top:10px;font-size:12px;color:var(--txt3)">Lien à partager : <span style="color:var(--c1)">reviseia.netlify.app</span></div>
+  </div>
+
+  ${user?`<button class="btn btn-s btn-full" style="opacity:.6;margin-bottom:8px" onclick="window.signOutUser();S.showModal=null;render()">👋 Se déconnecter</button>`:''}
+
+  <div style="text-align:center;margin-top:10px">
+    <a onclick="S.showModal='legal';render()" href="#" style="font-size:11px;color:var(--txt3);text-decoration:none;border-bottom:1px solid var(--bdr)">Mentions légales & Confidentialité</a>
+  </div>`;}
+
+// ─── CONSENTEMENT CGU ───
+function renderLegalConsent(){
+  return`
+  <div style="text-align:center;margin-bottom:20px">
+    <div style="font-size:40px;margin-bottom:10px">📋</div>
+    <h2 style="font-family:'Syne',sans-serif;font-weight:800;font-size:20px;margin-bottom:6px">Conditions d'utilisation</h2>
+    <p style="font-size:13px;color:var(--txt2);line-height:1.6">Avant de te connecter, prends 30 secondes pour lire l'essentiel.</p>
+  </div>
+  <div style="background:var(--s2);border:1px solid var(--bdr);border-radius:13px;padding:16px;margin-bottom:18px">
+    ${[
+      ['✅','Ton nom et email Google sont utilisés uniquement pour ta connexion'],
+      ['✅','Tes cours restent dans ton navigateur — on ne les voit jamais'],
+      ['✅','Pas de pub, pas de vente de données, jamais'],
+      ['✅','Tu peux supprimer ton compte à tout moment'],
+      ['⚠️','Les questions de l\'IA peuvent contenir des erreurs — c\'est un outil d\'aide'],
+    ].map(([ico,txt])=>`<div style="display:flex;gap:10px;font-size:13px;color:var(--txt2);padding:6px 0;border-bottom:1px solid var(--bdr)">${ico} ${txt}</div>`).join('')}
+  </div>
+  <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;padding:14px;background:var(--s2);border:1px solid var(--bdr);border-radius:12px;margin-bottom:16px">
+    <input type="checkbox" id="legal-cb" onchange="document.getElementById('legal-ok-btn').disabled=!this.checked"
+      style="width:18px;height:18px;accent-color:var(--c1);cursor:pointer;margin-top:1px;flex-shrink:0">
+    <span style="font-size:13px;color:var(--txt2);line-height:1.55">
+      J'ai lu et j'accepte les 
+      <span onclick="S.showModal='legal';render()" style="color:var(--c1);cursor:pointer;text-decoration:underline">Conditions d'utilisation et la Politique de confidentialité</span>
+    </span>
+  </label>
+  <button id="legal-ok-btn" class="btn btn-p btn-full" onclick="acceptLegal()" disabled style="opacity:.4;transition:opacity .2s">
+    Continuer avec Google →
+  </button>`;
+}
+
+// ─── PAGE LÉGALE COMPLÈTE (intégrée) ───
+function renderLegalFull(){
+  const section=(num,title,content)=>`
+    <div style="margin-bottom:32px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--bdr)">
+        <span style="background:var(--c1);color:#fff;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${num}</span>
+        <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px">${title}</span>
+      </div>
+      ${content}
+    </div>`;
+
+  return`
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+    <button class="btn btn-s btn-sm" onclick="S.showModal='legal_consent';render()">← Retour</button>
+    <h2 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800">Mentions légales</h2>
+    <span style="font-size:11px;color:var(--txt3);margin-left:auto">Mise à jour : mars 2026</span>
+  </div>
+  <div style="max-height:65vh;overflow-y:auto;padding-right:4px">
+
+  ${section(1,'Éditeur',`
+    <p style="font-size:13px;color:var(--txt2)"><strong style="color:var(--txt)">Application :</strong> RéviseIA — reviseia.netlify.app</p>
+    <p style="font-size:13px;color:var(--txt2)"><strong style="color:var(--txt)">Éditeur :</strong> Paul Royer — paul.royer16@gmail.com</p>
+    <p style="font-size:13px;color:var(--txt2)"><strong style="color:var(--txt)">Hébergement :</strong> Netlify Inc., San Francisco, USA</p>
+    <p style="font-size:13px;color:var(--txt2)"><strong style="color:var(--txt)">Base de données :</strong> Firebase / Google LLC, Mountain View, USA</p>
+  `)}
+
+  ${section(2,'Conditions d\'utilisation',`
+    <p style="font-size:13px;color:var(--txt2)">RéviseIA est un outil pédagogique d'aide aux révisions scolaires. Il ne remplace pas un enseignant ni une évaluation officielle.</p>
+    <p style="font-size:13px;color:var(--txt2);margin-top:8px"><strong style="color:var(--txt)">Autorisé :</strong> usage personnel et éducatif, partage du lien.</p>
+    <p style="font-size:13px;color:var(--txt2);margin-top:4px"><strong style="color:var(--txt)">Interdit :</strong> reverse engineering, revente, utilisation automatisée, contenu illégal.</p>
+    <p style="font-size:13px;color:var(--txt2);margin-top:8px">L'éditeur ne garantit pas l'exactitude des questions générées par l'IA. Aucune responsabilité sur les résultats scolaires.</p>
+  `)}
+
+  ${section(3,'Données personnelles (RGPD)',`
+    <p style="font-size:13px;color:var(--txt2)"><strong style="color:var(--txt)">Données collectées :</strong> nom, email, photo (via Google), historique des quiz, données d'entraînement.</p>
+    <p style="font-size:13px;color:var(--txt2);margin-top:6px"><strong style="color:var(--txt)">Non collecté :</strong> contenu de tes cours (reste dans ton navigateur), données bancaires, localisation, tracking pub.</p>
+    <p style="font-size:13px;color:var(--txt2);margin-top:6px"><strong style="color:var(--txt)">Tes droits :</strong> accès, rectification, effacement, portabilité — par email à paul.royer16@gmail.com sous 30 jours. Réclamation possible à la CNIL (cnil.fr).</p>
+    <p style="font-size:13px;color:var(--txt2);margin-top:6px"><strong style="color:var(--txt)">Transfert hors UE :</strong> données stockées sur Firebase (USA), encadré par les Clauses Contractuelles Types européennes.</p>
+  `)}
+
+  ${section(4,'Cookies',`
+    <p style="font-size:13px;color:var(--txt2)">Aucun cookie publicitaire. Le localStorage de ton navigateur stocke uniquement tes préférences, ton historique local et le token de connexion Google. Ces données fonctionnelles ne nécessitent pas de consentement explicite.</p>
+  `)}
+
+  ${section(5,'Propriété intellectuelle',`
+    <p style="font-size:13px;color:var(--txt2)">L'app et son code appartiennent à Paul Royer. Tes contenus (cours, questions) t'appartiennent. Toute reproduction commerciale non autorisée est interdite.</p>
+  `)}
+
+  <div style="background:var(--s2);border:1px solid var(--bdr);border-radius:12px;padding:14px;margin-top:8px;font-size:12px;color:var(--txt3)">
+    📬 Contact : paul.royer16@gmail.com · Délai de réponse : 30 jours max
+  </div>
+  </div>
+
+  <button class="btn btn-p btn-full" style="margin-top:16px" onclick="S.showModal='legal_consent';render()">← Retour aux conditions</button>`;
+}
+
+
+function renderHistory(){
+  const h=[...S.history].reverse();
+  return`
+  <div class="sl">Historique</div>
+  <h2 style="font-family:'Syne',sans-serif;font-weight:700;font-size:21px;margin-bottom:16px">Mes révisions</h2>
+  ${h.length===0?`<div class="empty"><div class="ei">📂</div><p>Aucun quiz encore.</p><button class="btn btn-p" style="margin-top:16px" onclick="nav('create')">✨ Commencer</button></div>`:
+    h.map(it=>`<div class="hi-item" onclick="loadHistory(${it.id})">
+      <div class="hibadge" style="background:${scCol(it.pct,.15)}">${scEm(it.pct)}</div>
+      <div class="hiinfo"><div class="hit">${it.subject}</div><div class="him">${it.date} · ${it.total} questions</div></div>
+      <div class="hiscore" style="color:${scCol(it.pct,1)}">${it.pct}%</div>
+    </div>`).join('')
+  }
+  ${h.length?`<button class="btn btn-s btn-sm" style="margin-top:8px;width:100%;justify-content:center" onclick="if(confirm('Effacer ?')){S.history=[];DB.set('history',[]);render()}">🗑 Effacer l'historique</button>`:''}`;
+}
+
+// ─── MODALS ───
+// ─── PROGRESS PAGE ───
+function renderProgress(){
+  const h=S.history;
+
+  // Graphique SVG des 10 derniers quiz
+  const last10=h.slice(-10);
+  const chartW=340,chartH=120,pad=30;
+  let svgPath='',svgDots='';
+  if(last10.length>=2){
+    const pts=last10.map((it,i)=>{
+      const x=pad+i*(chartW-pad*2)/(last10.length-1);
+      const y=chartH-pad-(it.pct/100)*(chartH-pad*2);
+      return{x,y,pct:it.pct,subj:it.subject,date:it.date};
+    });
+    svgPath=`<polyline fill="none" stroke="var(--c1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${pts.map(p=>`${p.x},${p.y}`).join(' ')}"/>`;
+    svgDots=pts.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="4" fill="var(--c1)"/>
+      <text x="${p.x}" y="${p.y-8}" text-anchor="middle" font-size="9" fill="var(--txt2)">${fmt20(p.pct)}</text>`).join('');
+  }
+
+  // Objectifs par matière
+  const bySubject={};
+  h.forEach(it=>{if(!bySubject[it.subject])bySubject[it.subject]=[];bySubject[it.subject].push(it.pct);});
+  const subjects=Object.entries(bySubject).map(([s,pcts])=>({
+    s,avg:Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length),
+    best:Math.max(...pcts),count:pcts.length,
+    obj:Objectives[s]||null
+  })).sort((a,b)=>b.avg-a.avg);
+
+  return`
+  <div class="sl">Progression</div>
+  <h2 style="font-family:'Syne',sans-serif;font-weight:700;font-size:20px;margin-bottom:16px">Mes progrès</h2>
+
+  ${last10.length>=2?`
+  <div class="chart-wrap">
+    <div style="font-size:12px;color:var(--txt2);margin-bottom:10px">Évolution des ${last10.length} derniers quiz</div>
+    <svg width="100%" viewBox="0 0 ${chartW} ${chartH}" style="overflow:visible">
+      <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${chartH-pad}" stroke="var(--bdr)" stroke-width="1"/>
+      <line x1="${pad}" y1="${chartH-pad}" x2="${chartW-pad}" y2="${chartH-pad}" stroke="var(--bdr)" stroke-width="1"/>
+      <text x="${pad-4}" y="${pad+4}" text-anchor="end" font-size="9" fill="var(--txt3)">20</text>
+      <text x="${pad-4}" y="${chartH-pad+4}" text-anchor="end" font-size="9" fill="var(--txt3)">0</text>
+      ${svgPath}${svgDots}
+    </svg>
+  </div>`:`<div class="card" style="text-align:center;color:var(--txt2);font-size:13px;padding:28px">Fais au moins 2 quiz pour voir ton graphique 📈</div>`}
+
+  <div class="sl" style="margin-top:8px">Objectifs par matière</div>
+  ${subjects.length===0?`<div class="card" style="text-align:center;color:var(--txt2);font-size:13px">Aucune matière encore. Commence un quiz !</div>`:''}
+  ${subjects.map(({s,avg,best,count,obj})=>`
+  <div class="card" style="padding:16px;margin-bottom:10px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:14px">${s}</div>
+        <div style="font-size:11px;color:var(--txt3)">${count} quiz · Meilleur : ${fmt20(best)}/20</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:${scCol(avg,1)}">${fmt20(avg)}<span style="font-size:13px;opacity:.6">/20</span></div>
+      </div>
+    </div>
+    <div class="obj-bar"><div class="obj-fill" style="width:${avg}%;background:${scCol(avg,1)}"></div></div>
+    ${obj?`<div style="font-size:11px;color:var(--txt2);margin-top:6px;display:flex;justify-content:space-between">
+      <span>Objectif : ${obj}/20</span>
+      <span style="color:${avg/20*20>=obj?'var(--c3)':'var(--txt3)'}">${avg/20*20>=obj?'✅ Atteint !':'Encore '+(obj-fmt20(avg)).toFixed(1)+' point(s)'}</span>
+    </div>`:''}
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <input type="number" min="1" max="20" step="0.5" placeholder="Objectif /20" value="${obj||''}"
+        style="flex:1;font-size:12px;padding:7px 10px;background:var(--s2);border:1px solid var(--bdr);border-radius:8px;color:var(--txt)"
+        onchange="setObjective('${s.replace(/'/g,"\\'")}',this.value);render()">
+      <button class="btn btn-g btn-sm" onclick="S.courseText='';nav('create')">Réviser →</button>
+    </div>
+  </div>`).join('')}
+
+  <div class="sl" style="margin-top:8px">Badges</div>
+  <div class="badges-grid">
+    ${BADGES_DEF.map(b=>`<div class="badge-item ${EarnedBadges.includes(b.id)?'unlocked':'locked'}" title="${b.desc}">
+      <div class="badge-ico">${b.ico}</div>
+      <div class="badge-name">${b.name}</div>
+    </div>`).join('')}
+  </div>`;
+}
+
+// ─── RÉVISION ESPACÉE ───
+function renderSR(){
+  const due=srGetDueQuestions();
+  if(due.length===0){
+    return`<div class="empty">
+      <div class="ei">🎉</div>
+      <h3 style="font-family:'Syne',sans-serif;font-size:18px;margin-bottom:8px">Tout est à jour !</h3>
+      <p style="font-size:13px;color:var(--txt2)">Aucune question à réviser aujourd'hui.<br>Reviens demain ou fais un nouveau quiz.</p>
+      <button class="btn btn-p" style="margin-top:16px" onclick="nav('create')">✨ Nouveau quiz</button>
+    </div>`;
+  }
+  if(!S.srQuiz){
+    return`
+    <div class="sl">Révision espacée</div>
+    <h2 style="font-family:'Syne',sans-serif;font-weight:700;font-size:20px;margin-bottom:8px">Questions du jour 🔁</h2>
+    <p style="font-size:13px;color:var(--txt2);margin-bottom:18px">${due.length} question(s) à revoir aujourd'hui d'après tes erreurs passées.</p>
+    ${due.map((q,i)=>`
+    <div class="sr-item">
+      <div style="flex:1"><div style="font-size:13px;font-weight:500">${q.question?.slice(0,70)}…</div>
+      <div style="font-size:11px;color:var(--txt3);margin-top:3px">${q.subject||'Cours'}</div></div>
+      <span class="sr-due today">À réviser</span>
+    </div>`).join('')}
+    <button class="btn btn-p btn-full" style="margin-top:16px" onclick="startSRQuiz()">▶ Commencer la révision</button>`;
+  }
+  // Mode quiz SR actif
+  const q=S.srQuiz[S.srIdx||0];
+  if(!q){
+    S.srQuiz=null;S.srIdx=0;
+    return`<div class="empty"><div class="ei">✅</div><h3>Révision terminée !</h3><button class="btn btn-p" style="margin-top:16px" onclick="nav('home')">Accueil</button></div>`;
+  }
+  const corr=S.srCorrections?.[S.srIdx||0];
+  return`
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <button class="btn btn-s btn-sm" onclick="S.srQuiz=null;S.srIdx=0;S.srCorrections={};nav('home')">← Quitter</button>
+    <div class="qprog" style="flex:1"><div class="qprog-f" style="width:${((S.srIdx||0)/S.srQuiz.length)*100}%"></div></div>
+    <span style="font-size:12px;color:var(--txt3)">${(S.srIdx||0)+1}/${S.srQuiz.length}</span>
+  </div>
+  <div class="card">
+    <div class="qnum">Révision espacée · ${tLbl(q.type)}</div>
+    <div class="qtxt">${q.question}</div>
+    ${q.type==='qcm'?renderQCM(q,corr):''}
+    ${q.type==='vtf'?renderVTF(q,corr):''}
+    ${q.type==='ouverte'?renderOpen(q,corr):''}
+    ${corr?renderFB(corr):''}
+  </div>
+  ${corr?`<button class="btn btn-p btn-full" onclick="nextSR()">${(S.srIdx||0)<S.srQuiz.length-1?'Suivante →':'Terminer ✅'}</button>`:''}`;
+}
+
+// ─── FICHE DE RÉVISION ───
+function renderFiche(){
+  if(!S.ficheText&&!S.quiz){
+    return`
+    <div class="sl">Fiche de révision</div>
+    <h2 style="font-family:'Syne',sans-serif;font-weight:700;font-size:20px;margin-bottom:14px">Générer une fiche</h2>
+    <div class="card">
+      <label class="lbl">Colle ton cours pour générer une fiche résumé</label>
+      <textarea id="fiche-input" rows="8" placeholder="Colle ton cours ici…" oninput="S.ficheText=this.value">${S.ficheText||''}</textarea>
+      <button class="btn btn-p btn-full" style="margin-top:12px" onclick="generateFiche()" ${S.ficheText?.length>50?'':'disabled'}>📄 Générer la fiche</button>
+    </div>`;
+  }
+  const text=S.ficheText||S.quiz?.questions?.map(q=>q.question).join(' ')||'';
+  const subject=NLP.detectSubject(text);
+  const defs=NLP.extractDefinitions(text).slice(0,8);
+  const concepts=NLP.extractConcepts(text,12);
+  const dates=NLP.extractDates(text).slice(0,6);
+  return`
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+    <div style="flex:1">
+      <div class="sl" style="margin-bottom:2px">Fiche de révision</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:19px">${subject}</div>
+    </div>
+    <button class="btn btn-s btn-sm" onclick="window.print()">🖨 Imprimer</button>
+    <button class="btn btn-s btn-sm" onclick="S.ficheText=null;render()">← Retour</button>
+  </div>
+
+  ${defs.length?`<div class="card" style="margin-bottom:12px">
+    <div style="font-weight:600;margin-bottom:12px;font-size:14px">📖 Définitions clés</div>
+    ${defs.map(d=>`<div style="padding:8px 0;border-bottom:1px solid var(--bdr)">
+      <span style="font-weight:600;color:var(--c1)">${d.term}</span>
+      <span style="color:var(--txt2);font-size:13px"> — ${d.def}</span>
+    </div>`).join('')}
+  </div>`:''}
+
+  ${concepts.length?`<div class="card" style="margin-bottom:12px">
+    <div style="font-weight:600;margin-bottom:10px;font-size:14px">💡 Notions importantes</div>
+    <div style="display:flex;flex-wrap:wrap;gap:7px">
+      ${concepts.map(c=>`<span style="background:rgba(74,134,240,.12);border:1px solid rgba(74,134,240,.2);color:var(--c1);padding:4px 12px;border-radius:20px;font-size:12px">${c}</span>`).join('')}
+    </div>
+  </div>`:''}
+
+  ${dates.length?`<div class="card" style="margin-bottom:12px">
+    <div style="font-weight:600;margin-bottom:10px;font-size:14px">📅 Dates importantes</div>
+    ${dates.map(d=>`<div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid var(--bdr);font-size:13px">
+      <strong style="color:var(--c4);min-width:40px">${d.year}</strong>
+      <span style="color:var(--txt2)">${d.event}</span>
+    </div>`).join('')}
+  </div>`:''}
+
+  <div class="card" style="margin-bottom:12px">
+    <div style="font-weight:600;margin-bottom:10px;font-size:14px">✏️ Questions probables à l'examen</div>
+    ${NLP.extractConcepts(text,5).map((c,i)=>`<div style="font-size:13px;color:var(--txt2);padding:7px 0;border-bottom:1px solid var(--bdr)">${i+1}. Explique ce qu'est <em style="color:var(--txt)">${c}</em>.</div>`).join('')}
+  </div>`;
+}
+
+
+function nav(p){S.page=p;render();if(typeof window.scrollTo==='function')window.scrollTo(0,0);}
+function setMode(m){S.mode=m;render();}
+function canGen(){return S.mode==='text'?S.courseText.trim().length>50:!!S.imageData;}
+
+function updateCourseText(val){
+  S.courseText=val;
+  // Mettre à jour le compteur sans re-render complet (évite de perdre le focus)
+  const counter=document.getElementById('ct-counter');
+  const btn=document.getElementById('gen-btn');
+  const hint=document.getElementById('gen-hint');
+  if(counter){
+    const concepts=NLP.extractConcepts(val,5).length;
+    const defs=NLP.extractDefinitions(val).length;
+    const r=val.trim().length>50?ConfidenceAnalyzer.analyze(val,S.numQ):null;
+    const col=r?(r.score>=75?'var(--c3)':r.score>=45?'var(--c4)':'var(--c5)'):'var(--txt3)';
+    counter.innerHTML=`<span style="color:var(--txt3)">${val.length} car. · ${concepts} concepts · ${defs} définitions</span>${r?`<span style="color:${col};font-weight:700">Confiance : ${r.score}%</span>`:'<span style="color:var(--txt3)">Min. 50 car.</span>'}`;
+  }
+  if(btn){btn.disabled=!canGen();}
+  if(hint){hint.style.display=canGen()?'none':'block';}
+}
+function closeModal(){S.showModal=null;S.installTab='phone';render();}
+
+
+
+function updateExoBtn(){
+  const btn=document.querySelector('[onclick="solveExo()"]');
+  if(!btn)return;
+  const ok=S.exoText.trim().length>10||(S.exoMode==='image'&&S.exoImageData);
+  btn.disabled=!ok;
+}
+
+function bindEv(){
+  // Si du texte existe déjà (ex: retour sur la page), mettre à jour le compteur
+  if(S.courseText&&S.courseText.length>0){
+    setTimeout(()=>updateCourseText(S.courseText),50);
+  }
+  const dz=document.getElementById('dz');
+  if(dz){dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag')});dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');if(e.dataTransfer.files[0])procFile(e.dataTransfer.files[0],'img')});}
+  const dz2=document.getElementById('dz2');
+  if(dz2){dz2.addEventListener('dragover',e=>{e.preventDefault();dz2.classList.add('drag')});dz2.addEventListener('dragleave',()=>dz2.classList.remove('drag'));dz2.addEventListener('drop',e=>{e.preventDefault();dz2.classList.remove('drag');if(e.dataTransfer.files[0])procFile(e.dataTransfer.files[0],'exo')});}
+}
+
+function handleFile(inp,t){if(inp.files[0])procFile(inp.files[0],t);}
+function procFile(f,t){
+  const r=new FileReader();
+  r.onload=e=>{
+    if(t==='img')S.imageData=e.target.result;
+    else{S.exoImageData=e.target.result;S.exoMode='image';}
+    render();
+  };
+  r.readAsDataURL(f);
+}
+
+function genQuiz(){
+  const report=ConfidenceAnalyzer.analyze(S.courseText,S.numQ);
+  S.confidenceReport=report;
+  if(report.level==='low'&&!S.forceGen){S.page='confidence_warning';render();return;}
+  S.forceGen=false;
+  document.getElementById('app').innerHTML=renderHdr()+`<div class="loading"><div class="spin"></div><h3>L'IA analyse ton cours…</h3><p>Confiance : ${report.score}% · ${report.metrics.defs} définition(s) · ${report.metrics.concepts} concepts<br>Génération des questions en cours…</p></div>`+renderNav();
+  setTimeout(()=>{
+    try{
+      const quiz=QuizEngine.generate(S.courseText,{type:S.quizType,numQ:S.numQ});
+      if(!quiz||quiz.questions.length===0){toast('⚠️ Contenu insuffisant. Ajoute plus de texte ou enrichis l\'entraînement.');S.page='create';render();return;}
+      S.quiz=quiz;
+      S.quiz._confidence=report;
+      S.corrections=[];S.currentQ=0;S.currentAns='';S.score=null;
+      S.page='quiz';
+      preloadQuizImages(quiz).then(()=>{if(S.page==='quiz')render();});
+      render();
+    }catch(e){console.error(e);toast('❌ Erreur de génération.');S.page='create';render();}
+  },700);
+}
+
+function solveExo(){
+  const text=S.exoText.trim()||(S.exoImageData?'(exercice depuis image)':'');
+  document.getElementById('app').innerHTML=renderHdr()+`<div class="loading"><div class="spin"></div><h3>Analyse de l'exercice…</h3><p>Détection du type de problème<br>Application de la méthode adaptée<br>Résolution étape par étape</p></div>`+renderNav();
+  setTimeout(()=>{
+    S.exoResult=ExerciseSolver.solve(text);
+    S.page='exo';render();
+  },600);
+}
+
+function exoToQuiz(){
+  if(S.exoText.trim().length>30){S.courseText=S.exoText;S.page='create';render();}
+  else{toast('Ajoute du texte dans l\'exercice pour créer un quiz.');}
+}
+
+function selQCM(i){if(S.corrections[S.currentQ]!==undefined)return;S.currentAns=String(i);render();}
+function selVTF(v){if(S.corrections[S.currentQ]!==undefined)return;S.currentAns=v;render();}
+
+function subQCM(){
+  const q=S.quiz.questions[S.currentQ];
+  const c=QuizEngine.correct(q,S.currentAns);
+  c.si=parseInt(S.currentAns);
+  S.corrections[S.currentQ]=c;
+  if(!c.correct)autoLearnFromError(q);
+  S.currentAns='';render();
+}
+function subVTF(){
+  const q=S.quiz.questions[S.currentQ];
+  const c=QuizEngine.correct(q,S.currentAns);
+  c.sv=S.currentAns;
+  S.corrections[S.currentQ]=c;
+  if(!c.correct)autoLearnFromError(q);
+  S.currentAns='';render();
+}
+function submitOpen(){
+  const ans=(document.getElementById('oa')?.value||S.currentAns).trim();
+  if(!ans){toast('Écris ta réponse d\'abord !');return;}
+  const q=S.quiz.questions[S.currentQ];
+  const c=QuizEngine.correct(q,ans);
+  c.answer=ans;
+  S.corrections[S.currentQ]=c;
+  if(!c.correct)autoLearnFromError(q);
+  S.currentAns='';render();
+}
+function nextQ(){S.currentQ++;S.currentAns='';render();window.scrollTo(0,0);}
+
+function showResults(){
+  const correct=S.corrections.filter(c=>c?.correct).length;
+  const total=S.quiz.questions.length;
+  const pct=Math.round((correct/total)*100);
+  S.score={correct,total,pct};
+  const wrongQs=S.quiz.questions.filter((_,i)=>!S.corrections[i]?.correct);
+  const conf=S.quiz._confidence;
+  S.advice=generateAdvice(S.score,wrongQs,S.quiz.subject,conf);
+  updateMastery(S.quiz.subject,pct);
+  const entry={id:Date.now(),subject:S.quiz.subject,date:new Date().toLocaleDateString('fr-FR'),total,correct,pct,quizType:S.quizType,quiz:S.quiz,corrections:S.corrections,confidence:conf?.score};
+  S.history.push(entry);DB.set('history',S.history);
+  S.page='results';render();
+}
+
+function loadHistory(id){
+  const it=S.history.find(h=>h.id===id);if(!it)return;
+  S.quiz=it.quiz;S.corrections=it.corrections;S.score={correct:it.correct,total:it.total,pct:it.pct};S.advice='(Résultat historique)';S.page='results';render();
+}
+
+function startSRQuiz(){
+  S.srQuiz=srGetDueQuestions();
+  S.srIdx=0;
+  S.srCorrections={};
+  render();
+}
+function nextSR(){
+  const q=S.srQuiz[S.srIdx||0];
+  const ans=S.currentAns;
+  if(q&&ans){
+    const c=QuizEngine.correct(q,ans);
+    if(!S.srCorrections)S.srCorrections={};
+    S.srCorrections[S.srIdx||0]=c;
+    srUpdate(q,c.correct);
+    S.currentAns='';
+  }
+  S.srIdx=(S.srIdx||0)+1;
+  if(S.srIdx>=S.srQuiz.length){S.srQuiz=null;S.srIdx=0;}
+  render();
+}
+function generateFiche(){
+  if(!S.ficheText||S.ficheText.length<50){toast('Ajoute plus de texte !');return;}
+  render();
+}
+
+// Wrapper connexion Google — vérifie CGU d'abord
+function connecterGoogle(){
+  if(!DB.get('legalAccepted')){
+    window._pendingLogin=true;
+    S.showModal='legal_consent';
+    render();
+    return;
+  }
+  window.signInWithGoogle?.();
+}
+
+function acceptLegal(){
+  DB.set('legalAccepted',true);
+  S.showModal=null;
+  render();
+  if(window._pendingLogin){
+    window._pendingLogin=false;
+    // Relancer la connexion maintenant que les CGU sont acceptées
+    setTimeout(()=>window.signInWithGoogle?.(),100);
+  }
+}
+
+// ── PARRAINAGE ───────────────────────────────────────
+let ReferralData=DB.get('referral')||{code:null};
+function getOrCreateReferralCode(){
+  if(ReferralData.code)return ReferralData.code;
+  const user=window._getUserInfo?.();
+  const base=user?user.email.split('@')[0].replace(/[^a-zA-Z0-9]/g,'').slice(0,4).toUpperCase():'USER';
+  const rand=Math.random().toString(36).slice(2,6).toUpperCase();
+  ReferralData.code=(base+rand).slice(0,8);
+  DB.set('referral',ReferralData);
+  return ReferralData.code;
+}
+
+// ── IMAGES WIKIMEDIA ─────────────────────────────────
+const _imgCache={};
+async function fetchWikimediaImage(query){
+  if(_imgCache[query]!==undefined)return _imgCache[query];
+  try{
+    const url=`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`;
+    const r=await fetch(url,{signal:AbortSignal.timeout(3000)});
+    if(!r.ok){_imgCache[query]=null;return null;}
+    const d=await r.json();
+    const img=d.thumbnail?.source||d.originalimage?.source||null;
+    _imgCache[query]=img;
+    return img;
+  }catch{_imgCache[query]=null;return null;}
+}
+
+// Chercher une image pertinente pour un concept de question
+async function getQuestionImage(question,subject){
+  // Extraire les mots-clés les plus significatifs
+  const stopwords=new Set(['quelle','quel','quels','quelles','est','sont','était','quand','comment','pourquoi','que','qui','dans','pour','avec','sans','sur','les','des','une','un','le','la','du','au','aux']);
+  const words=question.toLowerCase()
+    .replace(/[^a-zéèêëàâîïùûüôœç\s]/g,'')
+    .split(/\s+/)
+    .filter(w=>w.length>4&&!stopwords.has(w));
+  
+  // Chercher d'abord avec les 2 premiers mots, puis le premier seul
+  const queries=[
+    words.slice(0,2).join(' '),
+    words[0],
+    subject.replace(/[📐⚗️🌍🧬📖💰🤔🗣️📚]/g,'').trim(),
+  ].filter(Boolean);
+  
+  for(const q of queries){
+    const img=await fetchWikimediaImage(q);
+    if(img)return img;
+  }
+  return null;
+}
+
+// Déclencher le préchargement des images pour un quiz entier
+async function preloadQuizImages(quiz){
+  if(!quiz||!quiz.questions)return;
+  const promises=quiz.questions.map(q=>getQuestionImage(q.question,quiz.subject||''));
+  await Promise.allSettled(promises);
+}
+
+// HELPERS
+function tLbl(t){return{qcm:'QCM',ouverte:'Question ouverte',vtf:'Vrai / Faux'}[t]||t;}
+// ── SCORE HELPERS (/20) ──────────────────────────────
+function pctTo20(pct){return Math.round(pct/100*20*10)/10;}
+function fmt20(pct){return pctTo20(pct).toFixed(1);}
+function scCol(p,a=1){
+  if(p>=85)return`rgba(0,200,150,${a})`;
+  if(p>=65)return`rgba(232,154,30,${a})`;
+  return`rgba(232,68,68,${a})`;
+}
+function scEm(p){if(p>=90)return'🏆';if(p>=75)return'🎯';if(p>=60)return'👍';if(p>=40)return'📚';return'💪';}
+function getMention(p){
+  const n=pctTo20(p);
+  if(n>=18)return'🏆 Excellent !';
+  if(n>=15)return'🎯 Très bien !';
+  if(n>=12)return'👍 Bien';
+  if(n>=8)return'📚 En progression';
+  return'💪 À retravailler';
+}
+function getMentionSub(p){
+  const n=pctTo20(p);
+  if(n>=18)return'Maîtrise parfaite de ce cours.';
+  if(n>=15)return'Très bonne compréhension, quelques points à revoir.';
+  if(n>=12)return'Bonne base, continue !';
+  if(n>=8)return'Des progrès à faire, tu es sur la bonne voie !';
+  return'Relis ton cours et réessaie, tu peux y arriver !';
+}
+function toast(msg,dur=2800){S.toast=msg;render();setTimeout(()=>{S.toast=null;render();},dur);}
+
+// Expose globals for Firebase module
+window.S=S;
+window.SubjectMastery=SubjectMastery;
+window.DB=DB;
+window._appRender=function(){
+  try{
+    document.getElementById('app').innerHTML=renderHdr()+renderPage()+renderLegalFooter()+renderNav()+(S.toast?`<div class="toast">${S.toast}</div>`:'');
+  }catch(e){
+    console.error('Render error:',e);
+    document.getElementById('app').innerHTML='<div style="padding:40px;text-align:center;color:#e84444">Erreur. <button onclick="location.reload()">Recharger</button></div>';
+  }
+  if(S.showModal)renderModal();
+  else{const mr=document.getElementById('modal-root');if(mr)mr.innerHTML='';}
+  bindEv();
+};
+window._appToast=function(m,d){toast(m,d);};
+// INIT — démarre selon l'état Firebase
+function initApp(){
+  const hasCfg=window._hasFBConfig?.();
+  const isLogged=window._isLoggedIn?.();
+  render();
+}
+// Footer légal dans le DOM fixe
+function renderLegalFooter(){
+  return`<div style="text-align:center;padding:12px 0 4px;font-size:11px;color:var(--txt3)">
+    <a onclick="S.showModal='legal';render()" href="#" target="_blank" style="color:var(--txt3);text-decoration:none;border-bottom:1px solid var(--bdr)">Mentions légales & Confidentialité</a>
+    &nbsp;·&nbsp; © 2026 RéviseIA
+  </div>`;
+}
+// Le module Firebase appellera render() lui-même via onAuthStateChanged
+// Fallback si module pas encore chargé
+if(!window._hasFBConfig){setTimeout(()=>render(),100);}
+applySettings();
+checkStreak();
+checkBadges();
+render();
+</script>
+</body>
+</html>
